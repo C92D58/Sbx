@@ -621,7 +621,7 @@ change() {
         [[ $is_auto ]] && is_new_servername=$is_random_servername
         [[ ! $is_new_servername ]] && ask string is_new_servername "請輸入新的 serverName:"
         is_servername=$is_new_servername
-        [[ $(grep -i "^wahsun.org$" <<<$is_servername) ]] && {
+        [[ $(grep -i "^google.com$" <<<$is_servername) ]] && {
             err "domain blocked"
         }
         add $net
@@ -635,7 +635,7 @@ change() {
         [[ ! -f $is_caddy_conf/${host}.conf.add ]] && err "無法配置偽裝網站."
         [[ ! $is_new_proxy_site ]] && ask string is_new_proxy_site "請輸入新的偽裝網站 (例如 example.com):"
         proxy_site=$(sed 's#^.*//##;s#/$##' <<<$is_new_proxy_site)
-        [[ $(grep -i "^wahsun.org$" <<<$proxy_site) ]] && {
+        [[ $(grep -i "^google.com$" <<<$proxy_site) ]] && {
             err "domain blocked"
         } || {
             load caddy.sh
