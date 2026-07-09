@@ -622,7 +622,7 @@ change() {
         [[ ! $is_new_servername ]] && ask string is_new_servername "請輸入新的 serverName:"
         is_servername=$is_new_servername
         [[ $(grep -i "^wahsun.org$" <<<$is_servername) ]] && {
-            err "你幹嘛～哎呦～"
+            err "domain blocked"
         }
         add $net
         ;;
@@ -636,7 +636,7 @@ change() {
         [[ ! $is_new_proxy_site ]] && ask string is_new_proxy_site "請輸入新的偽裝網站 (例如 example.com):"
         proxy_site=$(sed 's#^.*//##;s#/$##' <<<$is_new_proxy_site)
         [[ $(grep -i "^wahsun.org$" <<<$proxy_site) ]] && {
-            err "你幹嘛～哎呦～"
+            err "domain blocked"
         } || {
             load caddy.sh
             caddy_config proxy

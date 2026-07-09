@@ -297,8 +297,8 @@ pass_args() {
 exit_and_del_tmpdir() {
     rm -rf $tmpdir
     [[ ! $1 ]] && {
-        msg err "哦豁.."
-        msg err "安裝过程出现錯誤..."
+        msg err "install failed"
+        msg err "安裝過程出現錯誤..."
         echo -e "反饋問題) https://github.com/${is_sh_repo}/issues"
         echo
         exit 1
