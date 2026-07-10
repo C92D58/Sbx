@@ -1583,23 +1583,13 @@ update() {
     [[ $is_update_name != 'sh' ]] && manage restart $is_update_name &
 }
 
-# main menu — concise, 2-level
+# main menu — geek style, vertical
 is_main_menu() {
-    msg " ${c_dim}> sbx ${is_sh_ver} ${c_none}${is_core_status}"
-    msg " ${c_dim}  ─────────────────────────${c_none}"
-
-    if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg "  $(_bright "1)") $L_MENU_CONFIG      $(_bright "2)") $L_MENU_DNS_SHORT"
-        msg "  $(_bright "3)") $L_MENU_TOOLS        $(_bright "4)") $L_MENU_SYSTEM_SHORT"
-        msg "  $(_bright "5)") $L_MENU_HELP_SHORT"
-    else
-        msg "  $(_bright "1)") config   $(_bright "2)") dns"
-        msg "  $(_bright "3)") tools    $(_bright "4)") system"
-        msg "  $(_bright "5)") help"
-    fi
-
-    msg " ${c_dim}  ─────────────────────────${c_none}"
-    echo -ne "  $(_bright ">") "
+    msg
+    msg " ${c_bright}▐▌ ${c_none}${c_dim}sbx${c_none} ${c_bright}${is_sh_ver}${c_none} ${is_core_status}"
+    msg
+    show_menu_items
+    echo -ne " ${c_bright}>${c_none} "
     read -r REPLY
     [[ ! $REPLY ]] && return
     is_main_start=1
@@ -1609,54 +1599,81 @@ is_main_menu() {
 
     case $REPLY in
     1)  # config
-        [[ $zh == 1 ]] && local items="添加 更改 查看 刪除" || local items="add change view delete"
-        ask list is_do_config "$items"
+        [[ $zh == 1 ]] && local items="add 添加" || local items="add" 
+        [[ $zh == 1 ]] && items="$items change 更改" || items="$items change"
+        [[ $zh == 1 ]] && items="$items view 查看" || items="$items view"
+        [[ $zh == 1 ]] && items="$items delete 刪除" || items="$items delete"
+        menu_sub "config" "$items"
         case $REPLY in
         1) add ;; 2) change ;; 3) info ;; 4) del ;;
         esac ;;
     2)  # dns
         load dns.sh
-        [[ $zh == 1 ]] && local items="NextDNS DNS預設" || local items="NextDNS preset"
-        ask list is_do_dns "$items"
+        [[ $zh == 1 ]] && menu_sub "dns" "nextdns NextDNS preset DNS預設" || menu_sub "dns" "nextdns preset"
         case $REPLY in
         1) dns_set_nextdns ;; 2) dns_set ;;
         esac ;;
     3)  # tools
-        [[ $zh == 1 ]] && local items="測速 健康檢查 備份還原 流量統計" || local items="speed health backup traffic"
-        ask list is_do_tools "$items"
+        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量" || menu_sub "tools" "speed health backup traffic"
         case $REPLY in
         1) load speed.sh; speed_set ;;
         2) load check.sh; check_set ;;
         3) load backup.sh; backup_set ;;
         4) load traffic.sh; traffic_set ;;
         esac ;;
-    4)  # system
-        [[ $zh == 1 ]] && local items="啟動/停止/重啟 BBR 日誌 更新 重裝 卸載" || local items="start/stop/restart BBR log update reinstall uninstall"
-        ask list is_do_sys "$items"
+    4)  # system  
+        [[ $zh == 1 ]] && menu_sub "system" "manage 管理 bbr BBR log 日誌 update 更新 reinstall 重裝 uninstall 卸載" || menu_sub "system" "manage bbr log update reinstall uninstall"
         case $REPLY in
-        1) [[ $zh == 1 ]] && local mgmt="啟動 停止 重啟" || local mgmt="start stop restart"
-           ask list is_do_manage "$mgmt"
-           manage $REPLY &
-           msg "  $(_bright $is_do_manage)" ;;
+        1) [[ $zh == 1 ]] && local mgmt="start 啟動 stop 停止 restart 重啟" || local mgmt="start stop restart"
+           menu_sub "manage" "$mgmt"
+           manage $REPLY & ;;
         2) load bbr.sh; _try_enable_bbr ;;
         3) load log.sh; log_set ;;
-        4) [[ $zh == 1 ]] && local upd="更新核心 更新腳本" || local upd="update core update script"
-           is_tmp_list=($upd)
-           [[ $is_caddy ]] && is_tmp_list+=("update Caddy")
-           ask list is_do_update
-           update $REPLY ;;
+        4) [[ $zh == 1 ]] && menu_sub "update" "core 核心 script 腳本" || menu_sub "update" "core script"
+           case $REPLY in
+           1) update core ;;
+           2) update sh ;;
+           esac
+           [[ $is_caddy ]] && update caddy ;;
         5) get reinstall ;;
         6) uninstall ;;
         esac ;;
     5)  # help
-        [[ $zh == 1 ]] && local items="幫助 關於 語言" || local items="help about language"
-        ask list is_do_help "$items"
+        [[ $zh == 1 ]] && menu_sub "help" "help 幫助 about 關於 lang 語言" || menu_sub "help" "help about lang"
         case $REPLY in
         1) load help.sh; show_help ;;
         2) load help.sh; about ;;
-        3) _dim ">> sbx lang zh-TW | sbx lang en" ;;
+        3) _dim "  sbx lang zh-TW | sbx lang en" ;;
         esac ;;
     esac
+}
+
+show_menu_items() {
+    if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
+        msg " ${c_dim}[1]${c_none} 配置    ${c_dim}[2]${c_none} DNS"
+        msg " ${c_dim}[3]${c_none} 工具    ${c_dim}[4]${c_none} 系統"
+        msg " ${c_dim}[5]${c_none} 幫助"
+    else
+        msg " ${c_dim}[1]${c_none} config  ${c_dim}[2]${c_none} dns"
+        msg " ${c_dim}[3]${c_none} tools   ${c_dim}[4]${c_none} system"  
+        msg " ${c_dim}[5]${c_none} help"
+    fi
+}
+
+menu_sub() {
+    local title=$1; shift
+    msg
+    msg " ${c_bright}▐▌ ${title}${c_none}"
+    local i=1
+    local is_zh=0
+    [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang && is_zh=1
+    while [[ $# -gt 0 ]]; do
+        local cmd=$1; local label=$2; shift 2
+        [[ $is_zh == 1 ]] && msg " ${c_dim}[$i]${c_none} ${label}" || msg " ${c_dim}[$i]${c_none} ${cmd}"
+        ((i++))
+    done
+    echo -ne " ${c_bright}>${c_none} "
+    read -r REPLY
 }
 
 # check prefer args, if not exist prefer args and show main menu
