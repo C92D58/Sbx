@@ -1,5 +1,5 @@
 # backup.sh — 備份還原
-#   sbx backup              创建備份
+#   sbx backup              建立備份
 #   sbx backup list         列出備份
 #   sbx restore <file>      還原備份
 

@@ -81,6 +81,7 @@ show_help_en() {
     msg "  no-auto-tls [...]                               add config without auto TLS"
     msg "  bbr                                             enable BBR"
     msg "  bin [...]                                       run sing-box binary command"
+    msg "  matrix [rain|logo]                              Matrix digital rain"
     msg "  [...] [...]                                     pass-through to sing-box"
     msg "  h, help                                         show this help"
 }
@@ -146,36 +147,41 @@ show_help_zh() {
     msg "  no-auto-tls [...]                               添加配置（不自動 TLS）"
     msg "  bbr                                             啟用 BBR"
     msg "  bin [...]                                       執行 sing-box 指令"
+    msg "  matrix [rain|logo]                              Matrix 數位雨"
     msg "  [...] [...]                                     傳遞給 sing-box 核心"
     msg "  h, help                                         顯示此幫助"
 }
 
 about() {
     msg
-    msg " ${c_dim}WAHSUN${c_none}"
-    msg " ${c_dim}sbx ${is_sh_ver}${c_none}"
+    msg " ${c_bright}┌─────────────────────────────────────────────┐${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim}▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}                    ${c_bright}│${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim} █  █▀  ▀█▀${c_none}  ${c_dim}matrix terminal UI${c_none}          ${c_bright}│${c_none}"
+    msg " ${c_bright}└─────────────────────────────────────────────┘${c_none}"
     msg
 
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
         msg " sbx 是一個 sing-box 管理腳本"
-        msg " 採用矩陣風格終端界面，支援多語言"
+        msg " 採用 Matrix 黑客帝國風格終端界面，支援多語言"
         msg ""
         msg " 功能："
         msg "  · 協議管理（REALITY / TUIC / Trojan / Hysteria2 等）"
         msg "  · NextDNS 多伺服器 DNS"
         msg "  · 測速 / 健康檢查 / 備份還原 / 流量統計"
         msg "  · 多語言界面（繁體中文 / English）"
+        msg "  · 'sbx matrix' — 進入母體"
         msg ""
         msg " 作者: WAHSUN"
     else
         msg " sbx is a sing-box management script"
-        msg " with Matrix-styled terminal UI and multi-language support"
+        msg " with Matrix-themed terminal UI and multi-language support"
         msg ""
         msg " Features:"
         msg "  · Protocol management (REALITY / TUIC / Trojan / Hysteria2 ...)"
         msg "  · NextDNS multi-server DNS"
         msg "  · Speed test / health check / backup & restore / traffic stats"
         msg "  · Multi-language UI (English / 繁體中文)"
+        msg "  · 'sbx matrix' — enter the Matrix"
         msg ""
         msg " Author: WAHSUN"
     fi

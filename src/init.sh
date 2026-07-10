@@ -48,7 +48,7 @@ load() {
 
 # wget add --no-check-certificate
 _wget() {
-    # [[ $proxy ]] && export https_proxy=$proxy
+    [[ $proxy ]] && export https_proxy=$proxy
     wget --no-check-certificate "$@"
 }
 
@@ -96,8 +96,9 @@ fi
 is_http_port=80
 is_https_port=443
 
-# core ver
+# core ver (normalize: strip leading 'v' if present)
 is_core_ver=$($is_core_bin version | head -n1 | cut -d " " -f3)
+is_core_ver=${is_core_ver#v}
 
 # tmp tls key
 is_tls_cer=$is_core_dir/bin/tls.cer

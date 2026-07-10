@@ -23,11 +23,11 @@ download() {
     latest_ver=$2
     [[ ! $latest_ver ]] && get_latest_version $1
     # tmp dir
-    tmpdir=$(mktemp -u)
+    tmpdir=$(mktemp -d)
     [[ ! $tmpdir ]] && {
         tmpdir=/tmp/tmp-$RANDOM
+        mkdir -p $tmpdir
     }
-    mkdir -p $tmpdir
     case $1 in
     core)
         name=$is_core_name

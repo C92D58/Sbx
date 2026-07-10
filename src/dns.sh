@@ -18,8 +18,9 @@ is_dns_presets=(
 
 # ── 主入口 ──────────────────────────────────────────────
 dns_set() {
-    # 檢測 core 版本是否支援新 DNS 格式 (v1.12+)
-    if [[ $(echo -e "1.11.99\n$is_core_ver" | sort -V | head -n1) == '1.11.99' ]]; then
+    # Detect core version for DNS format (v1.12+ uses new format)
+    local core_ver=${is_core_ver#v}
+    if [[ $(printf '%s\n' "1.12" "$core_ver" | sort -V | head -n1) == "1.12" ]]; then
         is_dns_new=1
     fi
 
@@ -67,7 +68,7 @@ dns_set() {
             dns_write_single "$is_dns_use"
         fi
     else
-        # ── 交互菜单 ──
+        # ── 互動選單 ──
         is_tmp_list=(
             "$L_DNS_NEXTDNS"
             "$L_DNS_CF"
@@ -107,12 +108,12 @@ dns_set_nextdns() {
     local config_id=$1
     local device_name=$2
 
-    # 交互獲取 Config ID
+    # 互動獲取 Config ID
     if [[ ! $config_id ]]; then
         ask string config_id "$L_DNS_NEXTDNS_ID: "
     fi
 
-    # 交互獲取設備名稱 (选填)
+    # 互動獲取裝置名稱 (選填)
     if [[ ! $device_name ]]; then
         echo -ne "  $L_DNS_DEVICE: "
         read -r device_name
@@ -202,31 +203,35 @@ dns_write_nextdns() {
         }')
 
     # ── 写入 config.json ──
-    cat <<<$(jq ".dns = $dns_obj | .route.default_domain_resolver = \"nextdns\"" "$config_file") >"$config_file"
+    jq --argjson dns "$dns_obj" '.dns = $dns | .route.default_domain_resolver = "nextdns"' \
+        "$config_file" >"$config_file.tmp" && mv "$config_file.tmp" "$config_file"
 }
 
-# ── 單服務器配置 (保留原始行為) ──────────────────────
+# ── 單服務器配置 ──────────────────────
 dns_write_single() {
     local addr=$1
     dns_set_server "$addr"
 
     if [[ $is_dns_new ]]; then
-        cat <<<$(jq \
-            '. | .dns.servers = [{tag:"dns", type:$type, server:$server, domain_resolver:"local"}, {tag:"local", type:"local"}] | .route.default_domain_resolver = "dns"' \
+        jq \
+            '.dns.servers = [{tag:"dns", type:$type, server:$server, domain_resolver:"local"}, {tag:"local", type:"local"}] | .route.default_domain_resolver = "dns"' \
             --arg type "$is_dns_type" \
             --arg server "$is_dns_use" \
-            "$is_config_json") >"$is_config_json"
+            "$is_config_json" >"$is_config_json.tmp" \
+            && mv "$is_config_json.tmp" "$is_config_json"
     else
-        cat <<<$(jq \
+        jq \
             '.dns.servers = [{address:$addr, address_resolver:"local"}, {tag:"local", address:"local"}]' \
             --arg addr "$is_dns_use" \
-            "$is_config_json") >"$is_config_json"
+            "$is_config_json" >"$is_config_json.tmp" \
+            && mv "$is_config_json.tmp" "$is_config_json"
     fi
 }
 
 # ── 清除 DNS ──────────────────────────────────────────
 dns_clear() {
-    cat <<<$(jq '. | .dns = {} | del(.route.default_domain_resolver)' "$is_config_json") >"$is_config_json"
+    jq '.dns = {} | del(.route.default_domain_resolver)' "$is_config_json" >"$is_config_json.tmp" \
+        && mv "$is_config_json.tmp" "$is_config_json"
 }
 
 # ── 解析 protocol://server ────────────────────────────

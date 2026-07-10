@@ -1,4 +1,4 @@
-# log.sh — 日誌管理
+# log.sh — log management
 is_log_level_list=(
     trace
     debug
@@ -20,15 +20,19 @@ log_set() {
         }
         case $is_log_level_use in
         del)
-            rm -rf $is_log_dir/*.log
+            rm -rf $is_log_dir/*.log*
             msg "  $(_bright "log files deleted")"
             ;;
         none)
-            rm -rf $is_log_dir/*.log
-            cat <<<$(jq '.log={"disabled":true}' $is_config_json) >$is_config_json
+            rm -rf $is_log_dir/*.log*
+            jq --arg dir "$is_log_dir" '.log={disabled:true}' "$is_config_json" >"$is_config_json.tmp" \
+                && mv "$is_config_json.tmp" "$is_config_json"
             ;;
         *)
-            cat <<<$(jq '.log={output:"'$is_log_dir'/access.log",level:"'$is_log_level_use'","timestamp":true}' $is_config_json) >$is_config_json
+            jq --arg dir "$is_log_dir" --arg level "$is_log_level_use" \
+                '.log={output:($dir + "/access.log"), level:$level, timestamp:true}' \
+                "$is_config_json" >"$is_config_json.tmp" \
+                && mv "$is_config_json.tmp" "$is_config_json"
             ;;
         esac
 

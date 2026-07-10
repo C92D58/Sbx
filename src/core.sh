@@ -142,10 +142,10 @@ get_uuid() {
 
 get_ip() {
     [[ $ip || $is_no_auto_tls || $is_gen || $is_dont_get_ip ]] && return
-    export "$(_wget -4 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
-    [[ ! $ip ]] && export "$(_wget -6 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
+    ip=$(_wget -4 -qO- https://one.one.one.one/cdn-cgi/trace 2>/dev/null | sed -n 's/^ip=//p')
+    [[ ! $ip ]] && ip=$(_wget -6 -qO- https://one.one.one.one/cdn-cgi/trace 2>/dev/null | sed -n 's/^ip=//p')
     [[ ! $ip ]] && {
-        err "獲取服務器 IP 失敗.."
+        err "$L_ERR_IP_FAIL"
     }
 }
 
@@ -154,7 +154,7 @@ get_port() {
     while :; do
         ((is_count++))
         if [[ $is_count -ge 233 ]]; then
-            err "自動獲取可用端口失敗次数达到 233 次, 請檢查端口占用情況."
+            err "$L_ERR_PORT_EXHAUSTED"
         fi
         tmp_port=$(shuf -i 445-65535 -n 1)
         [[ ! $(is_test port_used $tmp_port) && $tmp_port != $port ]] && break
@@ -168,23 +168,18 @@ get_pbk() {
 }
 
 show_list() {
-    PS3=''
-    COLUMNS=1
-    select i in "$@"; do echo; done &
-    wait
-    # i=0
-    # for v in "$@"; do
-    #     ((i++))
-    #     echo "$i) $v"
-    # done
-    # echo
-
+    local i=0
+    for v in "$@"; do
+        ((i++))
+        echo " ${c_dim}$i)${c_none} ${v}"
+    done
+    echo
 }
 
 is_test() {
     case $1 in
     number)
-        echo $2 | grep -E '^[1-9][0-9]?+$'
+        [[ $2 =~ ^[1-9][0-9]*$ ]] && echo ok
         ;;
     port)
         if [[ $(is_test number $2) ]]; then
@@ -195,13 +190,13 @@ is_test() {
         [[ $(is_port_used $2) && ! $is_cant_test_port ]] && echo ok
         ;;
     domain)
-        echo $2 | grep -E -i '^\w(\w|\-|\.)?+\.\w+$'
+        [[ $2 =~ ^[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$ ]] && echo ok
         ;;
     path)
-        echo $2 | grep -E -i '^\/\w(\w|\-|\/)?+\w$'
+        [[ $2 =~ ^\/[a-zA-Z0-9_\-\.\/]+$ ]] && echo ok
         ;;
     uuid)
-        echo $2 | grep -E -i '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        [[ $2 =~ [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12} ]] && echo ok
         ;;
     esac
 
@@ -219,8 +214,8 @@ is_port_used() {
         return
     fi
     is_cant_test_port=1
-    msg "$is_warn 無法檢測端口是否可用."
-    msg "請執行: $(_dim $cmd update -y install net-tools) 來修復此問題."
+    msg "$is_warn $L_ERR_PORT_DETECT_FAIL"
+    msg "$L_ERR_PORT_DETECT_FIX $(_dim $cmd update -y install net-tools)"
 }
 
 # ask input a string or pick a option for list.
@@ -330,7 +325,7 @@ create() {
         get new
         # listen
         is_listen='listen: "::"'
-        # file name - 随机5位数字
+        # file name - 隨機5位數字
         is_config_name=$(shuf -i 10000-99999 -n 1).json
         [[ $host ]] && is_listen='listen: "127.0.0.1"'
         is_json_file=$is_conf_dir/$is_config_name
@@ -365,7 +360,7 @@ create() {
         is_tls=tls
         is_client=1
         get info $2
-        [[ ! $is_client_id_json ]] && err "($is_config_name) 不支援生成客户端配置."
+        [[ ! $is_client_id_json ]] && err "($is_config_name) 不支援生成客戶端配置。"
         is_new_json=$(jq '{outbounds:[{tag:'\"$is_config_name\"',protocol:'\"$is_protocol\"','"$is_client_id_json"','"$is_stream"'}]}' <<<{})
         msg
         jq <<<$is_new_json
@@ -382,17 +377,16 @@ create() {
         manage restart caddy &
         ;;
     config.json)
-        is_log='log:{output:"'$is_log_dir'/access.log",level:"info","timestamp":true}'
-        is_dns='dns:{}'
         is_ntp='ntp:{"enabled":true,"server":"time.apple.com"},'
         if [[ -f $is_config_json ]]; then
             [[ $(jq .ntp.enabled $is_config_json) != "true" ]] && is_ntp=
         else
             [[ ! $is_ntp_on ]] && is_ntp=
         fi
-        is_outbounds='outbounds:[{tag:"direct",type:"direct"}]'
-        is_server_config_json=$(jq "{$is_log,$is_dns,$is_ntp$is_outbounds}" <<<{})
-        cat <<<$is_server_config_json >$is_config_json
+        jq -n \
+            --arg log_dir "$is_log_dir" \
+            '{log:{output:($log_dir + "/access.log"), level:"info", timestamp:true}, dns:{}, '"$is_ntp"' outbounds:[{tag:"direct", type:"direct"}]}' \
+            >"$is_config_json.tmp" && mv "$is_config_json.tmp" "$is_config_json"
         manage restart &
         ;;
     esac
@@ -599,13 +593,13 @@ change() {
             $is_core_bin check -c $is_tmp_json &>/dev/null
             if [[ $? != 0 ]]; then
                 is_key_err=1
-                is_key_err_msg="Private key 無法通过测試."
+                is_key_err_msg="Private key 無法通過測試."
             fi
             sed -i s#$is_new_private_key #$is_new_public_key# $is_tmp_json
             $is_core_bin check -c $is_tmp_json &>/dev/null
             if [[ $? != 0 ]]; then
                 is_key_err=1
-                is_key_err_msg+="Public key 無法通过测試."
+                is_key_err_msg+="Public key 無法通過測試."
             fi
             rm $is_tmp_json
             [[ $is_key_err ]] && err $is_key_err_msg
@@ -663,7 +657,7 @@ del() {
     [[ ! $is_config_file ]] && get info $1
     if [[ $is_config_file ]]; then
         if [[ $is_main_start && ! $is_no_del_msg ]]; then
-            msg "\n是否删除配置檔案?: $is_config_file"
+            msg "\n是否刪除配置檔案？: $is_config_file"
             pause
         fi
         rm -rf $is_conf_dir/"$is_config_file"
@@ -683,7 +677,7 @@ del() {
         }
     fi
     if [[ ! $(ls $is_conf_dir | grep .json) && ! $is_change ]]; then
-        warn "當前配置目錄為空! 因為你刚刚删除了最後一個配置檔案."
+        warn "當前配置目錄為空！因為你剛剛刪除了最後一個配置檔案。"
         is_conf_dir_empty=1
     fi
     unset is_dont_get_ip
@@ -693,10 +687,10 @@ del() {
 # uninstall
 uninstall() {
     if [[ $is_caddy ]]; then
-        is_tmp_list=("卸载 $is_core_name" "卸载 ${is_core_name} & Caddy")
+        is_tmp_list=("卸載 $is_core_name" "卸載 ${is_core_name} & Caddy")
         ask list is_do_uninstall
     else
-        ask string y "是否卸载 ${is_core_name}? [y]:"
+        ask string y "是否卸載 ${is_core_name}？[y]:"
     fi
     manage stop &>/dev/null
     manage disable &>/dev/null
@@ -831,7 +825,7 @@ add() {
                 [[ $(grep -E -i "^$is_lower$" <<<$v) ]] && is_new_protocol=$v && break
             done
 
-            [[ ! $is_new_protocol ]] && err "無法識別 ($1), 請使用: $is_sh_name add [protocol] [args... | auto]"
+            [[ ! $is_new_protocol ]] && err "$L_ERR_UNKNOWN_PROTOCOL $is_sh_name add [protocol] [args... | auto]"
             ;;
         esac
     fi
@@ -840,10 +834,10 @@ add() {
     [[ ! $is_new_protocol ]] && ask set_protocol
 
     if [[ ${is_new_protocol,,} == 'anytls' ]]; then
-        is_core_major=$(echo "$is_core_ver" | cut -d. -f1)
+        is_core_major=${is_core_ver%%.*}
         is_core_minor=$(echo "$is_core_ver" | cut -d. -f2)
-        if [[ ${is_core_major:-0} -lt 1 || ${is_core_major:-0} -eq 1 && ${is_core_minor:-0} -lt 12 ]]; then
-            err "當前 sing-box 版本 ($is_core_ver) 不支援 AnyTLS，請先升級 sing-box core 到 1.12.0 或更高版本。"
+        if [[ ${is_core_major:-0} -lt 1 || ( ${is_core_major:-0} -eq 1 && ${is_core_minor:-0} -lt 12 ) ]]; then
+            err "$L_ERR_ANYTLS_VERSION ($is_core_ver)"
         fi
     fi
 
@@ -1332,7 +1326,7 @@ get() {
             _dim ">> testing $is_core_name"
             manage start &>/dev/null
             if [[ $is_run_fail == $is_core ]]; then
-                _red "$is_core_name 運行失敗信息:"
+                _red "$is_core_name 執行失敗資訊:"
                 $is_core_bin run -c $is_config_json -C $is_conf_dir
             else
                 _bright ">> $is_core_name started"
@@ -1345,7 +1339,7 @@ get() {
                 _dim "\n>> testing Caddy\n"
                 manage start caddy &>/dev/null
                 if [[ $is_run_fail == 'caddy' ]]; then
-                    _red "Caddy 運行失敗信息:"
+                    _red "Caddy 執行失敗資訊:"
                     $is_caddy_bin run --config $is_caddyfile
                 else
                     _bright "\n>> Caddy started\n"
@@ -1484,7 +1478,7 @@ info() {
         _dim " > URL"
         msg " ${c_bright}${is_url}${c_none}"
         [[ $is_insecure ]] && {
-            warn "某些客户端如(V2rayN 等)導入URL需手動將: 跳過證書驗證(allowInsecure) 設置為 true, 或打開: 允許不安全的連接"
+            warn "部份客戶端（如 V2rayN 等）匯入 URL 時需手動將：跳過證書驗證 (allowInsecure) 設定為 true，或開啟：允許不安全的連線"
         }
     fi
     if [[ $is_no_auto_tls ]]; then
@@ -1497,8 +1491,8 @@ info() {
 
 # footer msg
 footer_msg() {
-    [[ $is_core_stop && ! $is_new_json ]] && warn "$is_core_name 當前處於停止狀態."
-    [[ $is_caddy_stop && $host ]] && warn "Caddy 當前處於停止狀態."
+    [[ $is_core_stop && ! $is_new_json ]] && warn "$is_core_name $L_STOPPED_MSG"
+    [[ $is_caddy_stop && $host ]] && warn "Caddy $L_STOPPED_MSG"
 }
 
 # URL or qrcode
@@ -1586,10 +1580,12 @@ update() {
 # main menu — geek style, vertical
 is_main_menu() {
     msg
-    msg " ${c_bright}▐▌ ${c_none}${c_dim}sbx${c_none} ${c_bright}${is_sh_ver}${c_none} ${is_core_status}"
-    msg
+    msg " ${c_bright}┌─────────────────────────────────────────────┐${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim}▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none} ${is_core_status}   ${c_bright}│${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim} █  █▀  ▀█▀${c_none}  ${c_dim}sing-box manager${c_none}          ${c_bright}│${c_none}"
+    msg " ${c_bright}└─────────────────────────────────────────────┘${c_none}"
     show_menu_items
-    echo -ne " ${c_bright}>${c_none} "
+    echo -ne " ${c_bright}>>${c_none} "
     read -r REPLY
     [[ ! $REPLY ]] && return
     is_main_start=1
@@ -1645,29 +1641,28 @@ is_main_menu() {
         2) load help.sh; about ;;
         3) _dim "  sbx lang zh-TW | sbx lang en" ;;
         esac ;;
+    m | M | matrix)
+        load matrix.sh
+        matrix_set
+        ;;
     esac
 }
 
 show_menu_items() {
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg " ${c_dim}[1]${c_none} 配置"
-        msg " ${c_dim}[2]${c_none} DNS"
-        msg " ${c_dim}[3]${c_none} 工具"
-        msg " ${c_dim}[4]${c_none} 系統"
-        msg " ${c_dim}[5]${c_none} 幫助"
+        msg " ${c_dim}[1]${c_none} 配置     ${c_dim}[2]${c_none} DNS        ${c_dim}[3]${c_none} 工具"
+        msg " ${c_dim}[4]${c_none} 系統     ${c_dim}[5]${c_none} 幫助       ${c_dim}[m]${c_none} 母體"
     else
-        msg " ${c_dim}[1]${c_none} config"
-        msg " ${c_dim}[2]${c_none} dns"
-        msg " ${c_dim}[3]${c_none} tools"
-        msg " ${c_dim}[4]${c_none} system"
-        msg " ${c_dim}[5]${c_none} help"
+        msg " ${c_dim}[1]${c_none} config   ${c_dim}[2]${c_none} dns        ${c_dim}[3]${c_none} tools"
+        msg " ${c_dim}[4]${c_none} system   ${c_dim}[5]${c_none} help       ${c_dim}[m]${c_none} matrix"
     fi
 }
 
 menu_sub() {
     local title=$1; shift
     msg
-    msg " ${c_bright}▐▌ ${title}${c_none}"
+    msg " ${c_bright}▐▌ ${c_dim}${title}${c_none}"
+    msg " ${c_dim}────────────────${c_none}"
     local i=1
     local is_zh=0
     [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang && is_zh=1
@@ -1752,7 +1747,7 @@ main() {
         *)
             is_dont_auto_exit=1
             [[ ! $2 ]] && {
-                err "無法找到需要删除的參數"
+                err "無法找到需要刪除的參數"
             } || {
                 for v in ${@:2}; do
                     del $v
@@ -1767,6 +1762,10 @@ main() {
     dns)
         load dns.sh
         dns_set ${@:2}
+        ;;
+    matrix)
+        load matrix.sh
+        matrix_set ${@:2}
         ;;
     lang)
         case ${2,,} in
@@ -1856,9 +1855,13 @@ main() {
         is_main_menu
         ;;
     v | ver | version)
-        [[ $is_caddy_ver ]] && is_caddy_ver="/ $(_bright $is_caddy_ver)"
-        msg " $(_bright $is_core_name $is_core_ver) $is_caddy_ver"
-        msg " ${c_dim}  WAHSUN${c_none}"
+        [[ $is_caddy_ver ]] && is_caddy_ver=" / ${c_bright}$is_caddy_ver${c_none}"
+        msg
+        msg " ${c_bright}┌────────────────────────────────┐${c_none}"
+        msg " ${c_bright}│${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}                     ${c_bright}│${c_none}"
+        msg " ${c_bright}│${c_none}  ${c_dim}sing-box${c_none} ${is_core_ver}${is_caddy_ver}         ${c_bright}│${c_none}"
+        msg " ${c_bright}│${c_none}  ${c_dim}WAHSUN${c_none}                        ${c_bright}│${c_none}"
+        msg " ${c_bright}└────────────────────────────────┘${c_none}"
         ;;
     h | help | --help)
         load help.sh

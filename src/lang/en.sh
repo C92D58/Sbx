@@ -59,7 +59,7 @@ L_INFO_SNI="SNI"
 L_INFO_FINGERPRINT="fingerprint"
 L_INFO_PUBKEY="public key"
 L_INFO_USER="username"
-L_INFO_INSECURE="allow insecure"
+L_INFO_INSECURE="allowInsecure"
 L_INFO_CONGESTION="congestion control"
 
 # Interactive prompts
@@ -117,7 +117,7 @@ L_CHECK_HEALTH="health check"
 L_CHECK_FILE="file"
 L_CHECK_PORT="port"
 L_CHECK_CORE="core"
-L_CHECK_ALL_OK="all ok"
+L_CHECK_ALL_OK="all OK"
 
 # Backup
 L_BACKUP_CREATE="creating backup"
@@ -132,7 +132,7 @@ L_TRAFFIC_TITLE="traffic stats"
 L_TRAFFIC_CONFIG="config"
 L_TRAFFIC_PROTO="proto"
 L_TRAFFIC_PORT="port"
-L_TRAFFIC_CONNS="conns"
+L_TRAFFIC_CONNS="connections"
 
 # Installer
 L_INSTALL_START="install started"
@@ -143,6 +143,15 @@ L_INSTALL_OK="install complete"
 L_INSTALL_FAIL="install failed"
 L_INSTALL_EXISTS="detected existing install, use"
 L_INSTALL_LANG="select language"
+
+# Error messages
+L_ERR_PORT_EXHAUSTED="auto port lookup failed after 233 attempts, check port usage"
+L_ERR_UNKNOWN_PROTOCOL="unknown protocol, usage:"
+L_ERR_ANYTLS_VERSION="current sing-box version does not support AnyTLS, please upgrade to 1.12.0+"
+L_ERR_PORT_DETECT_FAIL="cannot detect port availability"
+L_ERR_PORT_DETECT_FIX="please run:"
+L_ERR_IP_FAIL="failed to get server IP"
+L_ERR_PROTOCOL_NOTLS="does not support manual TLS config"
 
 # Language names
 L_LANG_ZH="繁體中文"

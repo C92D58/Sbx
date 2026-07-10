@@ -17,7 +17,7 @@ traffic_config() {
 
     local port=$(jq -r '.inbounds[0].listen_port // 0' "$config_file")
     local proto=$(jq -r '.inbounds[0].type // "?"' "$config_file")
-    local conns=$(ss -tlnp 2>/dev/null | grep ":$port " | wc -l | tr -d ' ')
+    local conns=$(ss -tnp 2>/dev/null | grep -c ":$port " || echo 0)
 
     printf "  %-8s %-6s %-6s %s\n" "$name" "$proto" ":$port" "$(_bright "$conns")"
 }

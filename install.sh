@@ -82,9 +82,10 @@ tmp_var_lists=(
 )
 
 # tmp dir
-tmpdir=$(mktemp -u)
+tmpdir=$(mktemp -d)
 [[ ! $tmpdir ]] && {
     tmpdir=/tmp/tmp-$RANDOM
+    mkdir -p $tmpdir
 }
 
 # set up var
@@ -196,8 +197,8 @@ download() {
 
 # get server ip
 get_ip() {
-    export "$(_wget -4 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
-    [[ -z $ip ]] && export "$(_wget -6 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
+    ip=$(_wget -4 -qO- https://one.one.one.one/cdn-cgi/trace 2>/dev/null | sed -n 's/^ip=//p')
+    [[ -z $ip ]] && ip=$(_wget -6 -qO- https://one.one.one.one/cdn-cgi/trace 2>/dev/null | sed -n 's/^ip=//p')
 }
 
 # check background tasks status
@@ -320,8 +321,10 @@ main() {
     # show welcome msg
     clear
     echo
-    _dim " sbx installer"
-    _dim " WAHSUN"
+    _bright " ┌─────────────────────────────────────┐"
+    _bright " │" && _dim "  ▀█▀ █▀▄ ▀ ▀  " && _bright "sbx installer  │"
+    _bright " │" && _dim "   █  █▀  ▀█▀  " && _dim "WAHSUN           " && _bright "│"
+    _bright " └─────────────────────────────────────┘"
     echo
 
     # language selection (hardcoded - language packs not available during pipe install)
@@ -393,11 +396,11 @@ main() {
         mkdir -p $tmpdir/testzip
         tar zxf $is_core_ok --strip-components 1 -C $tmpdir/testzip &>/dev/null
         [[ $? != 0 ]] && {
-            msg err "${is_core_name} 檔案無法通过测試."
+            msg err "${is_core_name} 檔案無法通過測試."
             exit_and_del_tmpdir
         }
         [[ ! -f $tmpdir/testzip/$is_core ]] && {
-            msg err "${is_core_name} 檔案無法通过测試."
+            msg err "${is_core_name} 檔案無法通過測試."
             exit_and_del_tmpdir
         }
     fi
