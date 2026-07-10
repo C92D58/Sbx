@@ -1585,8 +1585,7 @@ update() {
 
 # main menu — concise, 2-level
 is_main_menu() {
-    msg " ${c_dim}> sbx ${is_sh_ver} / ${is_core_name} ${is_core_ver} ${c_none}${is_core_status}"
-    msg " ${c_dim}  WAHSUN${c_none}"
+    msg " ${c_dim}> sbx ${is_sh_ver} ${c_none}${is_core_status}"
     msg " ${c_dim}  ─────────────────────────${c_none}"
 
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
