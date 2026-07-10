@@ -94,6 +94,7 @@ change_list=(
     "$L_CHANGE_USER"
 )
 servername_list=(
+    cn.bing.com
     www.amazon.com
     www.ebay.com
     www.paypal.com
@@ -621,7 +622,7 @@ change() {
         [[ $is_auto ]] && is_new_servername=$is_random_servername
         [[ ! $is_new_servername ]] && ask string is_new_servername "請輸入新的 serverName:"
         is_servername=$is_new_servername
-        [[ $(grep -i "^google.com$" <<<$is_servername) ]] && {
+        [[ $(grep -i "^cn.bing.com$" <<<$is_servername) ]] && {
             err "domain blocked"
         }
         add $net
@@ -635,7 +636,7 @@ change() {
         [[ ! -f $is_caddy_conf/${host}.conf.add ]] && err "無法配置偽裝網站."
         [[ ! $is_new_proxy_site ]] && ask string is_new_proxy_site "請輸入新的偽裝網站 (例如 example.com):"
         proxy_site=$(sed 's#^.*//##;s#/$##' <<<$is_new_proxy_site)
-        [[ $(grep -i "^google.com$" <<<$proxy_site) ]] && {
+        [[ $(grep -i "^cn.bing.com$" <<<$proxy_site) ]] && {
             err "domain blocked"
         } || {
             load caddy.sh
@@ -1582,79 +1583,80 @@ update() {
     [[ $is_update_name != 'sh' ]] && manage restart $is_update_name &
 }
 
-# main menu — tree structured, bilingual
+# main menu — concise, 2-level
 is_main_menu() {
     msg " ${c_dim}> sbx ${is_sh_ver} / ${is_core_name} ${is_core_ver} ${c_none}${is_core_status}"
     msg " ${c_dim}  WAHSUN${c_none}"
     msg " ${c_dim}  ─────────────────────────${c_none}"
 
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg " ${c_dim}  CONFIG${c_none}"
-        msg "  $(_bright "1)") 添加配置    $(_bright "2)") 更改    $(_bright "3)") 查看    $(_bright "4)") 刪除"
-        msg " ${c_dim}  DNS${c_none}"
-        msg "  $(_bright "5)") NextDNS     $(_bright "6)") 預設"
-        msg " ${c_dim}  工具${c_none}"
-        msg "  $(_bright "7)") 測速        $(_bright "8)") 檢查    $(_bright "9)") 備份    $(_bright "10)") 流量"
-        msg " ${c_dim}  系統${c_none}"
-        msg "  $(_bright "11)") 管理       $(_bright "12)") BBR    $(_bright "13)") 日誌    $(_bright "14)") 更新"
-        msg "  $(_bright "15)") 重裝       $(_bright "16)") 卸載"
-        msg " ${c_dim}  幫助${c_none}"
-        msg "  $(_bright "17)") 幫助       $(_bright "18)") 關於    $(_bright "19)") 語言"
+        msg "  $(_bright "1)") $L_MENU_CONFIG      $(_bright "2)") $L_MENU_DNS_SHORT"
+        msg "  $(_bright "3)") $L_MENU_TOOLS        $(_bright "4)") $L_MENU_SYSTEM_SHORT"
+        msg "  $(_bright "5)") $L_MENU_HELP_SHORT"
     else
-        msg " ${c_dim}  CONFIG${c_none}"
-        msg "  $(_bright "1)") add config  $(_bright "2)") change  $(_bright "3)") view   $(_bright "4)") delete"
-        msg " ${c_dim}  DNS${c_none}"
-        msg "  $(_bright "5)") NextDNS    $(_bright "6)") preset"
-        msg " ${c_dim}  TOOLS${c_none}"
-        msg "  $(_bright "7)") speed      $(_bright "8)") health  $(_bright "9)") backup $(_bright "10)") traffic"
-        msg " ${c_dim}  SYSTEM${c_none}"
-        msg "  $(_bright "11)") manage    $(_bright "12)") BBR    $(_bright "13)") log    $(_bright "14)") update"
-        msg "  $(_bright "15)") reinstall $(_bright "16)") uninstall"
-        msg " ${c_dim}  HELP${c_none}"
-        msg "  $(_bright "17)") help      $(_bright "18)") about  $(_bright "19)") language"
+        msg "  $(_bright "1)") config   $(_bright "2)") dns"
+        msg "  $(_bright "3)") tools    $(_bright "4)") system"
+        msg "  $(_bright "5)") help"
     fi
 
     msg " ${c_dim}  ─────────────────────────${c_none}"
     echo -ne "  $(_bright ">") "
     read -r REPLY
     [[ ! $REPLY ]] && return
-
-    if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        local mgmt="啟動 停止 重啟"
-        local upd="更新核心 更新腳本"
-        local upd_caddy="更新 Caddy"
-    else
-        local mgmt="start stop restart"
-        local upd="update core update script"
-        local upd_caddy="update Caddy"
-    fi
-
     is_main_start=1
+
+    local zh=0
+    [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang 2>/dev/null && zh=1
+
     case $REPLY in
-    1)  add ;;
-    2)  change ;;
-    3)  info ;;
-    4)  del ;;
-    5)  load dns.sh; dns_set_nextdns ;;
-    6)  load dns.sh; dns_set ;;
-    7)  load speed.sh; speed_set ;;
-    8)  load check.sh; check_set ;;
-    9)  load backup.sh; backup_set ;;
-    10) load traffic.sh; traffic_set ;;
-    11) ask list is_do_manage "$mgmt"
-        manage $REPLY &
-        msg "  $(_bright $is_do_manage)" ;;
-    12) load bbr.sh; _try_enable_bbr ;;
-    13) load log.sh; log_set ;;
-    14) is_tmp_list=($upd)
-        [[ $is_caddy ]] && is_tmp_list+=("$upd_caddy")
-        ask list is_do_update
-        update $REPLY ;;
-    15) get reinstall ;;
-    16) uninstall ;;
-    17) load help.sh; show_help ;;
-    18) load help.sh; about ;;
-    19) _dim ">> sbx lang zh-TW | sbx lang en" ;;
+    1)  # config
+        [[ $zh == 1 ]] && local items="添加 更改 查看 刪除" || local items="add change view delete"
+        ask list is_do_config "$items"
+        case $REPLY in
+        1) add ;; 2) change ;; 3) info ;; 4) del ;;
+        esac ;;
+    2)  # dns
+        load dns.sh
+        [[ $zh == 1 ]] && local items="NextDNS DNS預設" || local items="NextDNS preset"
+        ask list is_do_dns "$items"
+        case $REPLY in
+        1) dns_set_nextdns ;; 2) dns_set ;;
+        esac ;;
+    3)  # tools
+        [[ $zh == 1 ]] && local items="測速 健康檢查 備份還原 流量統計" || local items="speed health backup traffic"
+        ask list is_do_tools "$items"
+        case $REPLY in
+        1) load speed.sh; speed_set ;;
+        2) load check.sh; check_set ;;
+        3) load backup.sh; backup_set ;;
+        4) load traffic.sh; traffic_set ;;
+        esac ;;
+    4)  # system
+        [[ $zh == 1 ]] && local items="啟動/停止/重啟 BBR 日誌 更新 重裝 卸載" || local items="start/stop/restart BBR log update reinstall uninstall"
+        ask list is_do_sys "$items"
+        case $REPLY in
+        1) [[ $zh == 1 ]] && local mgmt="啟動 停止 重啟" || local mgmt="start stop restart"
+           ask list is_do_manage "$mgmt"
+           manage $REPLY &
+           msg "  $(_bright $is_do_manage)" ;;
+        2) load bbr.sh; _try_enable_bbr ;;
+        3) load log.sh; log_set ;;
+        4) [[ $zh == 1 ]] && local upd="更新核心 更新腳本" || local upd="update core update script"
+           is_tmp_list=($upd)
+           [[ $is_caddy ]] && is_tmp_list+=("update Caddy")
+           ask list is_do_update
+           update $REPLY ;;
+        5) get reinstall ;;
+        6) uninstall ;;
+        esac ;;
+    5)  # help
+        [[ $zh == 1 ]] && local items="幫助 關於 語言" || local items="help about language"
+        ask list is_do_help "$items"
+        case $REPLY in
+        1) load help.sh; show_help ;;
+        2) load help.sh; about ;;
+        3) _dim ">> sbx lang zh-TW | sbx lang en" ;;
+        esac ;;
     esac
 }
 
