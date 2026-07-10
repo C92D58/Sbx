@@ -1650,12 +1650,16 @@ is_main_menu() {
 
 show_menu_items() {
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg " ${c_dim}[1]${c_none} 配置    ${c_dim}[2]${c_none} DNS"
-        msg " ${c_dim}[3]${c_none} 工具    ${c_dim}[4]${c_none} 系統"
+        msg " ${c_dim}[1]${c_none} 配置"
+        msg " ${c_dim}[2]${c_none} DNS"
+        msg " ${c_dim}[3]${c_none} 工具"
+        msg " ${c_dim}[4]${c_none} 系統"
         msg " ${c_dim}[5]${c_none} 幫助"
     else
-        msg " ${c_dim}[1]${c_none} config  ${c_dim}[2]${c_none} dns"
-        msg " ${c_dim}[3]${c_none} tools   ${c_dim}[4]${c_none} system"  
+        msg " ${c_dim}[1]${c_none} config"
+        msg " ${c_dim}[2]${c_none} dns"
+        msg " ${c_dim}[3]${c_none} tools"
+        msg " ${c_dim}[4]${c_none} system"
         msg " ${c_dim}[5]${c_none} help"
     fi
 }
