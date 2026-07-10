@@ -15,10 +15,10 @@
 
 ```bash
 # 一鍵安裝（需要 Linux VPS root 權限）
-bash <(curl -sL https://raw.githubusercontent.com/c92d58/sbx/main/install.sh)
+bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 
 # 或本地安裝
-git clone https://github.com/c92d58/sbx.git
+git clone https://github.com/c92d58/Sbx.git
 cd sbx
 bash install.sh
 ```

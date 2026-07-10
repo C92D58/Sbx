@@ -15,10 +15,10 @@
 
 ```bash
 # One-liner install (requires root on Linux VPS)
-bash <(curl -sL https://raw.githubusercontent.com/c92d58/sbx/main/install.sh)
+bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 
 # Or local install
-git clone https://github.com/c92d58/sbx.git
+git clone https://github.com/c92d58/Sbx.git
 cd sbx
 bash install.sh
 ```
