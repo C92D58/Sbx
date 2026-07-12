@@ -5,7 +5,7 @@
 
 # ── Matrix Digital Rain ─────────────────────────────────────
 matrix_rain() {
-    local timeout=${1:-5}
+    local timeout=${1:-60}
     local chars="ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ0123456789"
     local cols=$(tput cols 2>/dev/null || echo 80)
     local lines=$(tput lines 2>/dev/null || echo 24)
@@ -25,7 +25,6 @@ matrix_rain() {
         # Check timeout
         local now=$(date +%s)
         [[ $((now - start)) -ge $timeout ]] && break
-        read -t 0.05 -n1 key 2>/dev/null && break
 
         for ((x=0; x<cols; x+=2)); do
             y=${drops[$x]}
