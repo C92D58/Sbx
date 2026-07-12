@@ -213,11 +213,11 @@ Matrix-themed — monochrome green on black, no background colors, clean tabular
 
 > 18347
 protocol              VLESS-REALITY  ← dim label  bright value
-address               185.201.227.246
+address               example.com
 port                  8443
 ...
 > URL
-vless://...@185.201.227.246:8443?...  ← bright share link
+vless://...@example.com:8443?...  ← bright share link
 
 [!] error message  (red — critical only)
 [-] warning notice (dim green — decoration / hints)
