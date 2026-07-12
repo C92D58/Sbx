@@ -1580,10 +1580,10 @@ update() {
 # main menu — geek style, vertical
 is_main_menu() {
     msg
-    msg " ${c_bright}┌─────────────────────────────────────────┐${c_none}"
-    msg " ${c_bright}│${c_none}    ${c_bright}sbx ${is_sh_ver}${c_none}  ${is_core_status} ${c_bright}│${c_none}"
-    msg " ${c_bright}│${c_none}  ${c_dim}WAHSUN 2025-2026 MIT${c_none}   ${c_bright}│${c_none}"
-    msg " ${c_bright}└─────────────────────────────────────────┘${c_none}"
+    msg " ${c_bright}+-----------------------------------------+${c_none}"
+    msg " ${c_bright}|${c_none}    ${c_bright}sbx ${is_sh_ver}${c_none}  ${is_core_status} ${c_bright}|${c_none}"
+    msg " ${c_bright}|${c_none}  ${c_dim}WAHSUN 2025-2026 MIT${c_none}   ${c_bright}|${c_none}"
+    msg " ${c_bright}+-----------------------------------------+${c_none}"
     show_menu_items
     echo -ne " ${c_bright}>>${c_none} "
     read -r REPLY
@@ -1675,7 +1675,7 @@ menu_sub() {
     local title=$1; shift
     msg
     msg " ${c_bright}▐▌ ${c_dim}${title}${c_none}"
-    msg " ${c_dim}────────────────${c_none}"
+    msg " ${c_dim}----------------${c_none}"
     local i=1
     local is_zh=0
     [[ -f $is_core_dir/lang ]] && grep -q zh-TW $is_core_dir/lang && is_zh=1
@@ -1888,11 +1888,11 @@ main() {
     v | ver | version)
         [[ $is_caddy_ver ]] && is_caddy_ver=" / ${c_bright}$is_caddy_ver${c_none}"
         msg
-        msg " ${c_bright}┌────────────────────────────────┐${c_none}"
-        msg " ${c_bright}│${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}                     ${c_bright}│${c_none}"
-        msg " ${c_bright}│${c_none}  ${c_dim}sing-box${c_none} ${is_core_ver}${is_caddy_ver}         ${c_bright}│${c_none}"
-        msg " ${c_bright}│${c_none}  ${c_dim}WAHSUN${c_none}                        ${c_bright}│${c_none}"
-        msg " ${c_bright}└────────────────────────────────┘${c_none}"
+        msg " ${c_bright}+--------------------------------+${c_none}"
+        msg " ${c_bright}|${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}                     ${c_bright}|${c_none}"
+        msg " ${c_bright}|${c_none}  ${c_dim}sing-box${c_none} ${is_core_ver}${is_caddy_ver}         ${c_bright}|${c_none}"
+        msg " ${c_bright}|${c_none}  ${c_dim}WAHSUN${c_none}                        ${c_bright}|${c_none}"
+        msg " ${c_bright}+--------------------------------+${c_none}"
         ;;
     h | help | --help)
         load help.sh
