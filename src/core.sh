@@ -1599,23 +1599,30 @@ is_main_menu() {
         [[ $zh == 1 ]] && items="$items change 更改" || items="$items change"
         [[ $zh == 1 ]] && items="$items view 查看" || items="$items view"
         [[ $zh == 1 ]] && items="$items delete 刪除" || items="$items delete"
+        items="$items back 返回 exit 退出"
         menu_sub "config" "$items"
         case $REPLY in
         1) add ;; 2) change ;; 3) info ;; 4) del ;;
+        b | B) return ;;
+        e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
     2)  # dns
         load dns.sh
-        [[ $zh == 1 ]] && menu_sub "dns" "nextdns NextDNS preset DNS預設" || menu_sub "dns" "nextdns preset"
+        [[ $zh == 1 ]] && menu_sub "dns" "nextdns NextDNS preset DNS預設 back 返回 exit 退出" || menu_sub "dns" "nextdns preset back exit"
         case $REPLY in
         1) dns_set_nextdns ;; 2) dns_set ;;
+        b | B) return ;;
+        e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
     3)  # tools
-        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量" || menu_sub "tools" "speed health backup traffic"
+        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量 back 返回 exit 退出" || menu_sub "tools" "speed health backup traffic back exit"
         case $REPLY in
         1) load speed.sh; speed_set ;;
         2) load check.sh; check_set ;;
         3) load backup.sh; backup_set ;;
         4) load traffic.sh; traffic_set ;;
+        b | B) return ;;
+        e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
     4)  # system  
         [[ $zh == 1 ]] && menu_sub "system" "manage 管理 bbr BBR log 日誌 update 更新 reinstall 重裝 uninstall 卸載" || menu_sub "system" "manage bbr log update reinstall uninstall"
@@ -1635,15 +1642,21 @@ is_main_menu() {
         6) uninstall ;;
         esac ;;
     5)  # help
-        [[ $zh == 1 ]] && menu_sub "help" "help 幫助 about 關於 lang 語言" || menu_sub "help" "help about lang"
+        [[ $zh == 1 ]] && menu_sub "help" "help 幫助 about 關於 lang 語言 back 返回 exit 退出" || menu_sub "help" "help about lang back exit"
         case $REPLY in
         1) load help.sh; show_help ;;
         2) load help.sh; about ;;
         3) _dim "  sbx lang zh-TW | sbx lang en" ;;
+        b | B) return ;;
+        e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
     m | M | matrix)
         load matrix.sh
         matrix_set
+        ;;
+    q | Q | quit | e | E | exit)
+        msg "  bye!"
+        exit 0
         ;;
     esac
 }
@@ -1868,7 +1881,9 @@ main() {
         msg $tmp_port
         ;;
     main)
-        is_main_menu
+        while :; do
+            is_main_menu
+        done
         ;;
     v | ver | version)
         [[ $is_caddy_ver ]] && is_caddy_ver=" / ${c_bright}$is_caddy_ver${c_none}"
