@@ -171,7 +171,7 @@ show_list() {
     local i=0
     for v in "$@"; do
         ((i++))
-        echo " ${c_dim}[$i]${c_none} ${v}"
+        echo " [$i] ${v}"
     done
     echo
 }
@@ -1665,7 +1665,7 @@ menu_sub() {
     msg " ${c_dim}────────────────${c_none}"
     local i=1
     local is_zh=0
-    [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang && is_zh=1
+    [[ -f $is_core_dir/lang ]] && grep -q zh-TW $is_core_dir/lang && is_zh=1
     read -ra items <<< "$@"
     if [[ $is_zh == 1 ]]; then
         local idx=0
@@ -1673,16 +1673,16 @@ menu_sub() {
             local cmd="${items[$idx]}"
             local label="${items[$((idx+1))]}"
             if [[ $label ]]; then
-                msg " ${c_dim}[$i]${c_none} $label"
+                msg " [$i] $label"
             else
-                msg " ${c_dim}[$i]${c_none} $cmd"
+                msg " [$i] $cmd"
             fi
             ((i++))
             idx=$((idx + 2))
         done
     else
         for cmd in "${items[@]}"; do
-            msg " ${c_dim}[$i]${c_none} $cmd"
+            msg " [$i] $cmd"
             ((i++))
         done
     fi
