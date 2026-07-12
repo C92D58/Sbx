@@ -1581,16 +1581,16 @@ update() {
 is_main_menu() {
     msg
     if [[ $is_sbx_splash == 0 ]]; then
-        msg " ${c_bright}+-----------------------+${c_none}"; sleep 0.1
-        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}  ${is_core_status} ${c_bright}|${c_none}"; sleep 0.12
-        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT  ${c_bright}|${c_none}"; sleep 0.12
-        msg " ${c_bright}+-----------------------+${c_none}"; sleep 0.1
+        msg " ${c_bright}+-------------------------+${c_none}"; sleep 0.1
+        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}   ${is_core_status}   ${c_bright}|${c_none}"; sleep 0.12
+        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT    ${c_bright}|${c_none}"; sleep 0.12
+        msg " ${c_bright}+-------------------------+${c_none}"; sleep 0.1
         is_sbx_splash=1
     else
-        msg " ${c_bright}+-----------------------+${c_none}"
-        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}  ${is_core_status} ${c_bright}|${c_none}"
-        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT  ${c_bright}|${c_none}"
-        msg " ${c_bright}+-----------------------+${c_none}"
+        msg " ${c_bright}+-------------------------+${c_none}"
+        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}   ${is_core_status}   ${c_bright}|${c_none}"
+        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT    ${c_bright}|${c_none}"
+        msg " ${c_bright}+-------------------------+${c_none}"
     fi
     show_menu_items
     echo -ne " ${c_bright}>>${c_none} "
