@@ -183,7 +183,7 @@ is_test() {
         ;;
     port)
         if [[ $(is_test number $2) ]]; then
-            [[ $2 -le 65535 ]] && echo ok
+            [[ $2 -ge 10000 && $2 -le 65535 ]] && echo ok
         fi
         ;;
     port_used)
@@ -283,7 +283,7 @@ ask() {
         if [[ ! $is_tmp_list ]]; then
             [[ $(grep port <<<$is_ask_set) ]] && {
                 [[ ! $(is_test port "$REPLY") ]] && {
-                    msg "$is_err 請輸入正確的端口, 可選(1-65535)"
+                    msg "$is_err 請輸入正確的端口, 可選(10000-65535)"
                     continue
                 }
                 if [[ $(is_test port_used $REPLY) && $is_ask_set != 'door_port' ]]; then
@@ -484,7 +484,7 @@ change() {
         is_new_port=$3
         [[ $host && ! $is_caddy || $is_no_auto_tls ]] && err "($is_config_file) 不支援更改端口, 因為沒啥意義."
         if [[ $is_new_port && ! $is_auto ]]; then
-            [[ ! $(is_test port $is_new_port) ]] && err "請輸入正確的端口, 可選(1-65535)"
+            [[ ! $(is_test port $is_new_port) ]] && err "請輸入正確的端口, 可選(10000-65535)"
             [[ $is_new_port != 443 && $(is_test port_used $is_new_port) ]] && err "無法使用 ($is_new_port) 端口"
         fi
         [[ $is_auto ]] && get_port && is_new_port=$tmp_port
