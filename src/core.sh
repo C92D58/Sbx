@@ -1580,10 +1580,11 @@ update() {
 # main menu — geek style, vertical
 is_main_menu() {
     msg
-    msg " ${c_bright}┌─────────────────────────────────────────────┐${c_none}"
-    msg " ${c_bright}│${c_none} ${c_dim}▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none} ${is_core_status}   ${c_bright}│${c_none}"
-    msg " ${c_bright}│${c_none} ${c_dim} █  █▀  ▀█▀${c_none}  ${c_dim}sing-box manager${c_none}          ${c_bright}│${c_none}"
-    msg " ${c_bright}└─────────────────────────────────────────────┘${c_none}"
+    msg " ${c_bright}┌─────────────────────────────────────────┐${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim}▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none} ${is_core_status} ${c_bright}│${c_none}"
+    msg " ${c_bright}│${c_none} ${c_dim} █  █▀  ▀█▀${c_none}  ${c_dim}sing-box manager${c_none}    ${c_bright}│${c_none}"
+    msg " ${c_bright}│${c_none}  ${c_dim}WAHSUN 2025-2026 MIT${c_none}   ${c_bright}│${c_none}"
+    msg " ${c_bright}└─────────────────────────────────────────┘${c_none}"
     show_menu_items
     echo -ne " ${c_bright}>>${c_none} "
     read -r REPLY
