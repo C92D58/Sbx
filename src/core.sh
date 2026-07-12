@@ -1614,25 +1614,20 @@ is_main_menu() {
         b | B) return ;;
         e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
-    2)  # dns
-        load dns.sh
-        [[ $zh == 1 ]] && menu_sub "dns" "nextdns NextDNS preset DNS預設 back 返回 exit 退出" || menu_sub "dns" "nextdns preset back exit"
-        case $REPLY in
-        1) dns_set_nextdns ;; 2) dns_set ;;
-        b | B) return ;;
-        e | E | q | Q | exit) msg && exit 0 ;;
-        esac ;;
-    3)  # tools
-        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量 back 返回 exit 退出" || menu_sub "tools" "speed health backup traffic back exit"
+    2)  # tools
+        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量 dns DNS preset DNS預設 back 返回 exit 退出" || menu_sub "tools" "speed health backup traffic dns preset back exit"
         case $REPLY in
         1) load speed.sh; speed_set ;;
         2) load check.sh; check_set ;;
         3) load backup.sh; backup_set ;;
         4) load traffic.sh; traffic_set ;;
+        5) load dns.sh; dns_set_nextdns ;;
+        6) load dns.sh; dns_set ;;
+        b | B) return ;;
         b | B) return ;;
         e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
-    4)  # system  
+    3)  # system  
         [[ $zh == 1 ]] && menu_sub "system" "manage 管理 bbr BBR log 日誌 update 更新 reinstall 重裝 uninstall 卸載" || menu_sub "system" "manage bbr log update reinstall uninstall"
         case $REPLY in
         1) [[ $zh == 1 ]] && local mgmt="start 啟動 stop 停止 restart 重啟" || local mgmt="start stop restart"
@@ -1649,7 +1644,7 @@ is_main_menu() {
         5) get reinstall ;;
         6) uninstall ;;
         esac ;;
-    5)  # help
+    4)  # help
         [[ $zh == 1 ]] && menu_sub "help" "help 幫助 about 關於 lang 語言 back 返回 exit 退出" || menu_sub "help" "help about lang back exit"
         case $REPLY in
         1) load help.sh; show_help ;;
@@ -1668,17 +1663,15 @@ is_main_menu() {
 show_menu_items() {
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
         msg " ${c_dim}[1]${c_none} 配置"
-        msg " ${c_dim}[2]${c_none} DNS"
+        msg " ${c_dim}[2]${c_none} 系統"
         msg " ${c_dim}[3]${c_none} 工具"
-        msg " ${c_dim}[4]${c_none} 系統"
-        msg " ${c_dim}[5]${c_none} 幫助"
+        msg " ${c_dim}[4]${c_none} 幫助"
         msg " ${c_dim}[0]${c_none} 退出"
     else
         msg " ${c_dim}[1]${c_none} config"
-        msg " ${c_dim}[2]${c_none} dns"
+        msg " ${c_dim}[2]${c_none} system"
         msg " ${c_dim}[3]${c_none} tools"
-        msg " ${c_dim}[4]${c_none} system"
-        msg " ${c_dim}[5]${c_none} help"
+        msg " ${c_dim}[4]${c_none} help"
         msg " ${c_dim}[0]${c_none} exit"
     fi
 }
