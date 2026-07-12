@@ -1658,11 +1658,7 @@ is_main_menu() {
         b | B) return ;;
         e | E | q | Q | exit) msg && exit 0 ;;
         esac ;;
-    m | M | matrix)
-        load matrix.sh
-        matrix_set
-        ;;
-    q | Q | quit | e | E | exit)
+    q | Q | quit | e | E | exit | 0)
         msg "  bye!"
         exit 0
         ;;
@@ -1671,11 +1667,19 @@ is_main_menu() {
 
 show_menu_items() {
     if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg " ${c_dim}[1]${c_none} 配置     ${c_dim}[2]${c_none} DNS        ${c_dim}[3]${c_none} 工具"
-        msg " ${c_dim}[4]${c_none} 系統     ${c_dim}[5]${c_none} 幫助       ${c_dim}[m]${c_none} 母體"
+        msg " ${c_dim}[1]${c_none} 配置"
+        msg " ${c_dim}[2]${c_none} DNS"
+        msg " ${c_dim}[3]${c_none} 工具"
+        msg " ${c_dim}[4]${c_none} 系統"
+        msg " ${c_dim}[5]${c_none} 幫助"
+        msg " ${c_dim}[0]${c_none} 退出"
     else
-        msg " ${c_dim}[1]${c_none} config   ${c_dim}[2]${c_none} dns        ${c_dim}[3]${c_none} tools"
-        msg " ${c_dim}[4]${c_none} system   ${c_dim}[5]${c_none} help       ${c_dim}[m]${c_none} matrix"
+        msg " ${c_dim}[1]${c_none} config"
+        msg " ${c_dim}[2]${c_none} dns"
+        msg " ${c_dim}[3]${c_none} tools"
+        msg " ${c_dim}[4]${c_none} system"
+        msg " ${c_dim}[5]${c_none} help"
+        msg " ${c_dim}[0]${c_none} exit"
     fi
 }
 
@@ -1800,10 +1804,7 @@ main() {
         load dns.sh
         dns_set ${@:2}
         ;;
-    matrix)
-        load matrix.sh
-        matrix_set ${@:2}
-        ;;
+
     lang)
         case ${2,,} in
         zh-tw|zh)
