@@ -171,7 +171,7 @@ show_list() {
     local i=0
     for v in "$@"; do
         ((i++))
-        echo " ${c_dim}$i)${c_none} ${v}"
+        echo " ${c_dim}[$i]${c_none} ${v}"
     done
     echo
 }
