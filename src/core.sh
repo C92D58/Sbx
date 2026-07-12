@@ -1666,14 +1666,30 @@ menu_sub() {
     local i=1
     local is_zh=0
     [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang && is_zh=1
-    while [[ $# -gt 0 ]]; do
-        local cmd=$1; local label=$2; shift 2
-        [[ $is_zh == 1 ]] && msg " ${c_dim}[$i]${c_none} ${label}" || msg " ${c_dim}[$i]${c_none} ${cmd}"
-        ((i++))
-    done
+    read -ra items <<< "$@"
+    if [[ $is_zh == 1 ]]; then
+        local idx=0
+        while [[ $idx -lt ${#items[@]} ]]; do
+            local cmd="${items[$idx]}"
+            local label="${items[$((idx+1))]}"
+            if [[ $label ]]; then
+                msg " ${c_dim}[$i]${c_none} $label"
+            else
+                msg " ${c_dim}[$i]${c_none} $cmd"
+            fi
+            ((i++))
+            idx=$((idx + 2))
+        done
+    else
+        for cmd in "${items[@]}"; do
+            msg " ${c_dim}[$i]${c_none} $cmd"
+            ((i++))
+        done
+    fi
     echo -ne " ${c_bright}>${c_none} "
     read -r REPLY
 }
+
 
 # check prefer args, if not exist prefer args and show main menu
 main() {
