@@ -330,10 +330,11 @@ main() {
     # show welcome msg
     clear
     echo
-    _bright " ┌─────────────────────────────────────┐"
-    _bright " │" && _dim "  ▀█▀ █▀▄ ▀ ▀  " && _bright "sbx installer  │"
-    _bright " │" && _dim "   █  █▀  ▀█▀  " && _dim "WAHSUN           " && _bright "│"
-    _bright " └─────────────────────────────────────┘"
+    _bright "  ▀█▀ █▀▄ ▀ ▀       sbx installer"
+    _dim   "   █  █▀  ▀█▀       next generation sing-box manager"
+    echo
+    _dim   "  ────────────────────────────────────────────"
+    echo -e "  ${c_bright}By: WAHSUN${c_none}"
     echo
 
     # language selection (hardcoded - language packs not available during pipe install)

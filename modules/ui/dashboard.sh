@@ -13,25 +13,25 @@ _pause() {
 # ── Dashboard header ──────────────────────────────────────────
 dashboard_header() {
     local core_icon=">>"
-    [[ $is_core_status =~ "running" ]] && core_icon="${c_bright}>>${c_none}" || core_icon="${c_dim}>>${c_none}"
+    [[ $is_core_status =~ "running" ]] && core_icon="${c_bright}▶${c_none}" || core_icon="${c_dim}■${c_none}"
 
     echo
     if [[ $is_sbx_splash -eq 0 ]]; then
+        sleep 0.06
+        echo -e "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
         sleep 0.08
-        echo -e " ${c_border}┌─────────────────────────────────────────────┐${c_none}"
-        sleep 0.08
-        echo -e " ${c_border}│${c_none} ${c_bright}▐▌ ▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}  $core_icon   ${c_border}│${c_none}"
-        sleep 0.08
-        echo -e " ${c_border}│${c_none} ${c_dim}▐▌  █  █▀  ▀█▀${c_none}  ${c_dim}modern sing-box manager${c_none}  ${c_border}│${c_none}"
-        sleep 0.08
-        echo -e " ${c_border}└─────────────────────────────────────────────┘${c_none}"
+        echo -e "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
+        sleep 0.04
+        echo -e "  ${c_dim}────────────────────────────────────────────${c_none}"
+        sleep 0.04
+        echo -e "  ${c_accent}By: WAHSUN${c_none}"
         sleep 0.08
         is_sbx_splash=1
     else
-        echo -e " ${c_border}┌─────────────────────────────────────────────┐${c_none}"
-        echo -e " ${c_border}│${c_none} ${c_bright}▐▌ ▀█▀ █▀▄ ▀ ▀${c_none}  ${c_bright}sbx ${is_sh_ver}${c_none}  $core_icon   ${c_border}│${c_none}"
-        echo -e " ${c_border}│${c_none} ${c_dim}▐▌  █  █▀  ▀█▀${c_none}  ${c_dim}modern sing-box manager${c_none}  ${c_border}│${c_none}"
-        echo -e " ${c_border}└─────────────────────────────────────────────┘${c_none}"
+        echo -e "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
+        echo -e "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
+        echo -e "  ${c_dim}────────────────────────────────────────────${c_none}"
+        echo -e "  ${c_accent}By: WAHSUN${c_none}"
     fi
 }
 
