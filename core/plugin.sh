@@ -1,15 +1,48 @@
 # plugin.sh — sbx plugin system
-#   sbx plugin list          list installed plugins
-#   sbx plugin install <url> install a plugin
-#   sbx plugin remove <name> remove a plugin
+#   sbx plugin list             list installed plugins
+#   sbx plugin <name> [cmd]     run a plugin command
 
 plugin_main() {
     case ${1,,} in
         list|ls|"") plugin_list ;;
         install|add) plugin_install "$2" ;;
         remove|delete|rm|del) plugin_remove "$2" ;;
-        *) plugin_info_single "$1" ;;
+        *) plugin_dispatch "$@" ;;
     esac
+}
+
+# ── Route subcommands to individual plugins ─────────────────
+plugin_dispatch() {
+    local name="${1,,}"
+    local cmd="${2,,}"
+    local plugin_file="$PLUGIN_DIR/$name/plugin.sh"
+
+    [[ -f "$plugin_file" ]] || {
+        echo
+        _dim "  plugin '$name' not found"
+        echo -e "  ${c_dim}available:${c_none}"
+        for d in "$PLUGIN_DIR"/*/; do
+            [[ -f "$d/plugin.sh" ]] && echo -e "  ${c_dim}$(basename "$d")${c_none}"
+        done
+        echo
+        return
+    }
+
+    . "$plugin_file"
+
+    # Look for plugin's main entry: <name>_main
+    local entry_fn="${name}_main"
+    if declare -f "$entry_fn" &>/dev/null; then
+        "$entry_fn" "${@:2}"
+    else
+        # Fallback: show plugin info
+        echo
+        . "$plugin_file"
+        printf "  ${c_bright}name:${c_none}        %s\n" "$(plugin_info | cut -d'|' -f1)"
+        printf "  ${c_dim}version:${c_none}     %s\n" "$(plugin_info | cut -d'|' -f2)"
+        printf "  ${c_dim}description:${c_none} %s\n" "$(plugin_info | cut -d'|' -f3)"
+        echo
+    fi
 }
 
 plugin_list() {
@@ -25,10 +58,11 @@ plugin_list() {
             found=1
             (
                 . "$d/plugin.sh"
-                printf "  ${c_bright}%-16s${c_none} ${c_dim}v%s${c_none}  ${c_dim}%s${c_none}\n" \
+                printf "  ${c_bright}%-16s${c_none} ${c_dim}v%s${c_none}\n" \
                     "$(plugin_info | cut -d'|' -f1)" \
-                    "$(plugin_info | cut -d'|' -f2)" \
-                    "$(plugin_info | cut -d'|' -f3)"
+                    "$(plugin_info | cut -d'|' -f2)"
+                printf "  ${c_dim}%-16s${c_none}\n" "$(plugin_info | cut -d'|' -f3)"
+                echo
             )
         done
     fi
@@ -36,30 +70,21 @@ plugin_list() {
     echo
 }
 
-plugin_info_single() {
-    local name=$1
-    local plugin_file="$PLUGIN_DIR/$name/plugin.sh"
-    [[ -f "$plugin_file" ]] || err "plugin '$name' not found"
-
-    echo
-    . "$plugin_file"
-    printf "  ${c_bright}name:${c_none}        %s\n" "$(plugin_info | cut -d'|' -f1)"
-    printf "  ${c_dim}version:${c_none}     %s\n" "$(plugin_info | cut -d'|' -f2)"
-    printf "  ${c_dim}description:${c_none} %s\n" "$(plugin_info | cut -d'|' -f3)"
-    echo
-}
-
 plugin_install() {
     local url=$1
-    [[ ! $url ]] && err "usage: sbx plugin install <git-url>"
+    [[ ! $url ]] && {
+        echo -e " ${c_dim}usage: sbx plugin install <git-url>${c_none}"
+        echo -e " ${c_dim}or manually place in: $PLUGIN_DIR/<name>/plugin.sh${c_none}"
+        return
+    }
     warn "plugin install from git not yet implemented"
     echo -e " ${c_dim}manually place plugins in: $PLUGIN_DIR/<name>/plugin.sh${c_none}"
 }
 
 plugin_remove() {
     local name=$1
-    [[ ! $name ]] && err "usage: sbx plugin remove <name>"
-    [[ ! -d "$PLUGIN_DIR/$name" ]] && err "plugin '$name' not found"
+    [[ ! $name ]] && { echo -e " ${c_dim}usage: sbx plugin remove <name>${c_none}"; return; }
+    [[ ! -d "$PLUGIN_DIR/$name" ]] && { warn "plugin '$name' not found"; return; }
 
     echo -ne " ${c_red}remove plugin '$name'? [y/N]:${c_none} "
     read -r confirm
