@@ -1,6 +1,6 @@
 #!/bin/bash
 
 args=$@
-is_sh_ver=v2.0.1
+is_sh_ver=v2.0.2
 
 . /etc/sbx/sh/core/init.sh
