@@ -1767,9 +1767,9 @@ main() {
     v | ver | version)
         [[ $is_caddy_ver ]] && is_caddy_ver=" / ${c_bright}$is_caddy_ver${c_none}"
         msg
-        msg "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}"
-        msg "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
-        msg "  ${c_dim}────────────────────────────────────────────${c_none}"
+        msg "  ${c_bright}sbx ${is_sh_ver}${c_none}"
+        msg "  ${c_dim}Next Generation sing-box Manager${c_none}"
+        msg "  ${c_dim}──────────────────────────────${c_none}"
         msg "  ${c_accent}By: WAHSUN${c_none}"
         msg "  ${c_dim}core:${c_none} sing-box ${is_core_ver}${is_caddy_ver}"
         msg

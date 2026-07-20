@@ -330,10 +330,10 @@ main() {
     # show welcome msg
     clear
     echo
-    _bright "  ▀█▀ █▀▄ ▀ ▀       sbx installer"
-    _dim   "   █  █▀  ▀█▀       next generation sing-box manager"
+    _bright "  sbx installer"
+    _dim   "  Next Generation sing-box Manager"
     echo
-    _dim   "  ────────────────────────────────────────────"
+    _dim   "  ──────────────────────────────"
     echo -e "  ${c_bright}By: WAHSUN${c_none}"
     echo
 

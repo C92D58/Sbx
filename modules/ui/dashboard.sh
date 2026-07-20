@@ -17,20 +17,20 @@ dashboard_header() {
 
     echo
     if [[ $is_sbx_splash -eq 0 ]]; then
-        sleep 0.06
-        echo -e "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
-        sleep 0.08
-        echo -e "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
         sleep 0.04
-        echo -e "  ${c_dim}────────────────────────────────────────────${c_none}"
+        echo -e "  ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
+        sleep 0.06
+        echo -e "  ${c_dim}Next Generation sing-box Manager${c_none}"
+        sleep 0.04
+        echo -e "  ${c_dim}─────────────────────────────────${c_none}"
         sleep 0.04
         echo -e "  ${c_accent}By: WAHSUN${c_none}"
-        sleep 0.08
+        sleep 0.06
         is_sbx_splash=1
     else
-        echo -e "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
-        echo -e "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
-        echo -e "  ${c_dim}────────────────────────────────────────────${c_none}"
+        echo -e "  ${c_bright}sbx ${is_sh_ver}${c_none}  ${core_icon}  ${c_dim}running${c_none}"
+        echo -e "  ${c_dim}Next Generation sing-box Manager${c_none}"
+        echo -e "  ${c_dim}─────────────────────────────────${c_none}"
         echo -e "  ${c_accent}By: WAHSUN${c_none}"
     fi
 }

@@ -154,9 +154,9 @@ show_help_zh() {
 
 about() {
     msg
-    msg "  ${c_bright}▀█▀ █▀▄ ▀ ▀${c_none}      ${c_bright}sbx ${is_sh_ver}${c_none}"
-    msg "  ${c_dim} █  █▀  ▀█▀${c_none}      ${c_dim}next generation sing-box manager${c_none}"
-    msg "  ${c_dim}────────────────────────────────────────────${c_none}"
+    msg "  ${c_bright}sbx ${is_sh_ver}${c_none}"
+    msg "  ${c_dim}Next Generation sing-box Manager${c_none}"
+    msg "  ${c_dim}──────────────────────────────${c_none}"
     msg "  ${c_accent}By: WAHSUN${c_none}"
     msg
 

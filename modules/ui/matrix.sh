@@ -89,19 +89,17 @@ matrix_logo() {
     clear
     echo
     sleep 0.1
-    echo -e "${c_dim}  ░▒▓████████████████████████████████████▓▒░${c_none}"
-    sleep 0.1
-    echo -e "${c_bright}  ▐▌                                      ▐▌${c_none}"
-    sleep 0.1
-    echo -e "${c_bright}  ▐▌  ${c_dim}▀█▀ █▀▄ ▀ ▀${c_bright}  ▐▌   ${c_dim}WAHSUN${c_bright}        ▐▌${c_none}"
-    sleep 0.1
-    echo -e "${c_bright}  ▐▌  ${c_dim} █  █▀  ▀█▀${c_bright}  ▐▌   ${c_dim}sing-box manager${c_bright} ▐▌${c_none}"
-    sleep 0.1
-    echo -e "${c_bright}  ▐▌           ${c_bright}  ▐▌   ${c_dim}${is_sh_ver}${c_bright}              ▐▌${c_none}"
-    sleep 0.1
-    echo -e "${c_bright}  ▐▌                                      ▐▌${c_none}"
-    sleep 0.1
-    echo -e "${c_dim}  ░▒▓████████████████████████████████████▓▒░${c_none}"
+    echo -e "${c_bright}     s    b    x${c_none}"
+    sleep 0.08
+    echo -e "${c_dim}    ─────────────${c_none}"
+    sleep 0.08
+    echo
+    sleep 0.06
+    echo -e "  ${c_bright}sbx ${is_sh_ver}${c_none}"
+    sleep 0.06
+    echo -e "  ${c_dim}Next Generation sing-box Manager${c_none}"
+    sleep 0.06
+    echo -e "  ${c_accent}By: WAHSUN${c_none}"
     sleep 0.1
     echo
     sleep 0.2
