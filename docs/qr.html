@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sbx — QR Code</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Courier New',Courier,monospace;
+  background:#0a0a0a;
+  color:#33ff33;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.container{text-align:center;padding:2rem}
+.logo{
+  font-size:1.4rem;color:#33ff33;
+  letter-spacing:0.15em;margin-bottom:0.3rem;
+}
+.tagline{
+  font-size:0.7rem;color:#1a5c1a;
+  letter-spacing:0.1em;margin-bottom:2rem;
+}
+#qrcode{
+  display:inline-block;padding:1.5rem;
+  background:#fff;border-radius:8px;
+  box-shadow:0 0 40px rgba(0,255,0,.08);
+}
+#qrcode img{display:block}
+#url-display{
+  margin-top:1.5rem;max-width:400px;
+  word-break:break-all;font-size:0.65rem;
+  color:#1a5c1a;line-height:1.6;
+  padding:0.5rem 1rem;
+  background:rgba(0,255,0,.03);
+  border-radius:4px;
+}
+.copy-btn{
+  margin-top:0.6rem;padding:0.3rem 1.2rem;
+  font-size:0.7rem;font-family:inherit;
+  background:rgba(0,255,0,.06);color:#33ff33;
+  border:1px solid rgba(0,255,0,.15);
+  border-radius:3px;cursor:pointer;
+  letter-spacing:0.05em;
+}
+.copy-btn:hover{background:rgba(0,255,0,.12)}
+.copy-btn.copied{color:#0a0a0a;background:#33ff33}
+.error{
+  color:#ff4444;font-size:0.8rem;
+  margin-top:1.5rem;display:none;
+}
+.footer{
+  margin-top:3rem;font-size:0.6rem;
+  color:#0d330d;letter-spacing:0.1em;
+}
+.footer span{color:#1a5c1a}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">s b x</div>
+  <div class="tagline">QR Code</div>
+  <div id="qrcode"></div>
+  <div id="url-display"></div>
+  <button class="copy-btn" id="copy-btn" onclick="copyUrl()">Copy URL</button>
+  <div id="error" class="error"></div>
+  <div class="footer"><span>sbx</span> / sing-box manager / <span>WAHSUN</span></div>
+</div>
+<script>
+(function(){
+  var url=location.hash.replace(/^#/,'')||'';
+  var qrEl=document.getElementById('qrcode');
+  var urlEl=document.getElementById('url-display');
+  var errEl=document.getElementById('error');
+  var btn=document.getElementById('copy-btn');
+
+  if(!url){
+    errEl.textContent='No config URL — append #your-link to the address bar';
+    errEl.style.display='block';
+    btn.style.display='none';
+    return;
+  }
+
+  try{
+    new QRCode(qrEl,{
+      text:url,width:280,height:280,
+      colorDark:'#000000',colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel.M
+    });
+    urlEl.textContent=url;
+  }catch(e){
+    errEl.textContent='QR generation failed: '+e.message;
+    errEl.style.display='block';
+  }
+})();
+
+function copyUrl(){
+  var url=location.hash.replace(/^#/,'');
+  if(!url)return;
+  navigator.clipboard.writeText(url).then(function(){
+    var btn=document.getElementById('copy-btn');
+    btn.textContent='Copied!';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copy URL';btn.classList.remove('copied')},1500);
+  });
+}
+</script>
+</body>
+</html>

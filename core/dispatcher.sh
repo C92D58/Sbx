@@ -1505,17 +1505,19 @@ url_qr() {
             msg " ${c_bright}${is_url}${c_none}"
             footer_msg
         } || {
-            link="https://c92d58.github.io/tools/qr.html#${is_url}"
+            link="https://c92d58.github.io/Sbx/qr.html#${is_url}"
             _dim " > QR: ${is_config_name%.json}"
             msg
+            # Try to install qrencode if missing
+            if [[ ! $(type -P qrencode) ]]; then
+                _dim ">> installing qrencode..."
+                $cmd install -y qrencode &>/dev/null && _dim ">> qrencode installed" || _dim ">> qrencode unavailable, showing web link"
+            fi
             if [[ $(type -P qrencode) ]]; then
                 qrencode -t ANSI "${is_url}"
-            else
-                msg "  install qrencode: $(_bright $cmd install qrencode)"
             fi
             msg
-            msg "如果無法正常顯示或識別, 請使用下面的連結來生成二維碼:"
-            msg " ${c_bright}${link}${c_none}"
+            echo -e " ${c_dim}Web QR:${c_none}  ${c_bright}${link}${c_none}"
             footer_msg
         }
     else
