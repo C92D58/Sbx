@@ -40,9 +40,9 @@ download() {
     sh)
         name="$is_sh_name 腳本"
         tmpfile=$tmpdir/sh.tar.gz
-        link="https://github.com/${is_sh_repo}/releases/download/${latest_ver}/code.tar.gz"
+        link="https://github.com/${is_sh_repo}/archive/refs/tags/${latest_ver}.tar.gz"
         download_file
-        tar zxf $tmpfile -C $is_sh_dir
+        tar zxf $tmpfile --strip-components 1 -C $is_sh_dir
         chmod +x $is_sh_bin ${is_sh_bin/$is_sh_name/sb}
         ;;
     caddy)
