@@ -33,7 +33,7 @@ is_warn=$(_dim "[-]")
 
 err() {
     echo -e "\n ${c_red}[!]${c_none} $@\n"
-    [[ $is_dont_auto_exit ]] && return
+    [[ $is_dont_auto_exit || $is_dashboard ]] && return
     exit 1
 }
 

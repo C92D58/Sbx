@@ -135,7 +135,7 @@ dashboard_main() {
 
     is_main_start=1
     # Prevent err() from killing the dashboard session
-    is_dont_auto_exit=1
+    is_dashboard=1
 
     case $REPLY in
     # ── [1] Create ──────────────────────────────────────────
@@ -285,22 +285,60 @@ dashboard_main() {
     7)
         load theme.sh
         echo
-        theme_list
+        _dim "  >> available themes"
         echo
-        echo -ne " ${c_dim}theme name (Enter to keep):${c_none} "
-        read -r theme_choice
-        [[ $theme_choice ]] && theme_set "$theme_choice"
+        local themes=()
+        for f in "$THEME_DIR"/*.sh; do
+            [[ -f "$f" ]] || continue
+            themes+=("$(basename "$f" .sh)")
+        done
+        local i=1
+        for t in "${themes[@]}"; do
+            local marker=" "
+            [[ "$t" == "$is_theme" ]] && marker="${c_bright}*${c_none}"
+            echo -e "  ${c_dim}[$i]${c_none} $marker ${c_bright}$t${c_none}"
+            ((i++))
+        done
+        echo
+        echo -ne " ${c_dim}select theme [1-${#themes[@]} / Enter=keep]:${c_none} "
+        read -r theme_pick
+        if [[ $theme_pick =~ ^[0-9]+$ && $theme_pick -ge 1 && $theme_pick -le ${#themes[@]} ]]; then
+            theme_set "${themes[$((theme_pick-1))]}"
+        fi
         _pause
         ;;
 
     # ── [8] Plugins ─────────────────────────────────────────
     8)
         load plugin.sh
-        plugin_list
-        echo -ne " ${c_dim}plugin name for details (Enter to skip):${c_none} "
-        read -r plugin_choice
-        if [[ $plugin_choice ]]; then
-            plugin_dispatch "$plugin_choice"
+        echo
+        _dim "  >> installed plugins"
+        echo
+        local plugins=()
+        if [[ -d "$PLUGIN_DIR" ]]; then
+            for d in "$PLUGIN_DIR"/*/; do
+                [[ -f "$d/plugin.sh" ]] || continue
+                plugins+=("$(basename "$d")")
+            done
+        fi
+        if [[ ${#plugins[@]} -eq 0 ]]; then
+            _dim "  no plugins installed"
+        else
+            local i=1
+            for p in "${plugins[@]}"; do
+                local info=$(. "$PLUGIN_DIR/$p/plugin.sh" && plugin_info)
+                local name=$(echo "$info" | cut -d'|' -f1)
+                local desc=$(echo "$info" | cut -d'|' -f3)
+                echo -e "  ${c_dim}[$i]${c_none} ${c_bright}$name${c_none}  ${c_dim}$desc${c_none}"
+                ((i++))
+            done
+            echo
+            echo -ne " ${c_dim}select plugin [1-${#plugins[@]} / Enter=back]:${c_none} "
+            read -r plugin_pick
+            if [[ $plugin_pick =~ ^[0-9]+$ && $plugin_pick -ge 1 && $plugin_pick -le ${#plugins[@]} ]]; then
+                echo
+                plugin_dispatch "${plugins[$((plugin_pick-1))]}"
+            fi
         fi
         _pause
         ;;
@@ -344,5 +382,5 @@ dashboard_main() {
     esac
 
     # Reset for next loop iteration
-    is_dont_auto_exit=
+    is_dashboard=
 }
