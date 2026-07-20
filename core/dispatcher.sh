@@ -1578,134 +1578,10 @@ update() {
 }
 
 # main menu — geek style, vertical
+# main menu — delegates to dashboard module
 is_main_menu() {
-    msg
-    if [[ $is_sbx_splash == 0 ]]; then
-        msg " ${c_bright}+-------------------------+${c_none}"; sleep 0.1
-        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}   ${is_core_status}   ${c_bright}|${c_none}"; sleep 0.12
-        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT    ${c_bright}|${c_none}"; sleep 0.12
-        msg " ${c_bright}+-------------------------+${c_none}"; sleep 0.1
-        is_sbx_splash=1
-    else
-        msg " ${c_bright}+-------------------------+${c_none}"
-        msg " ${c_bright}|${c_none} sbx ${is_sh_ver}   ${is_core_status}   ${c_bright}|${c_none}"
-        msg " ${c_bright}|${c_none} WAHSUN 2025-2026 MIT    ${c_bright}|${c_none}"
-        msg " ${c_bright}+-------------------------+${c_none}"
-    fi
-    show_menu_items
-    echo -ne " ${c_bright}>>${c_none} "
-    read -r REPLY
-    [[ ! $REPLY ]] && return
-    is_main_start=1
-
-    local zh=0
-    [[ -f $is_core_dir/lang ]] && grep -q 'zh-TW' $is_core_dir/lang 2>/dev/null && zh=1
-
-    case $REPLY in
-    1)  # config
-        [[ $zh == 1 ]] && local items="add 添加" || local items="add" 
-        [[ $zh == 1 ]] && items="$items change 更改" || items="$items change"
-        [[ $zh == 1 ]] && items="$items view 查看" || items="$items view"
-        [[ $zh == 1 ]] && items="$items delete 刪除" || items="$items delete"
-        items="$items back 返回 exit 退出"
-        menu_sub "config" "$items"
-        case $REPLY in
-        1) add ;; 2) change ;; 3) info ;; 4) del ;;
-        b | B) return ;;
-        e | E | q | Q | exit) msg && exit 0 ;;
-        esac ;;
-    2)  # tools
-        [[ $zh == 1 ]] && menu_sub "tools" "speed 測速 health 檢查 backup 備份 traffic 流量 dns DNS preset DNS預設 back 返回 exit 退出" || menu_sub "tools" "speed health backup traffic dns preset back exit"
-        case $REPLY in
-        1) load speed.sh; speed_set ;;
-        2) load check.sh; check_set ;;
-        3) load backup.sh; backup_set ;;
-        4) load traffic.sh; traffic_set ;;
-        5) load dns.sh; dns_set_nextdns ;;
-        6) load dns.sh; dns_set ;;
-        b | B) return ;;
-        b | B) return ;;
-        e | E | q | Q | exit) msg && exit 0 ;;
-        esac ;;
-    3)  # system  
-        [[ $zh == 1 ]] && menu_sub "system" "manage 管理 bbr BBR log 日誌 update 更新 reinstall 重裝 uninstall 卸載" || menu_sub "system" "manage bbr log update reinstall uninstall"
-        case $REPLY in
-        1) [[ $zh == 1 ]] && local mgmt="start 啟動 stop 停止 restart 重啟" || local mgmt="start stop restart"
-           menu_sub "manage" "$mgmt"
-           manage $REPLY & ;;
-        2) load bbr.sh; _try_enable_bbr ;;
-        3) load log.sh; log_set ;;
-        4) [[ $zh == 1 ]] && menu_sub "update" "core 核心 script 腳本" || menu_sub "update" "core script"
-           case $REPLY in
-           1) update core ;;
-           2) update sh ;;
-           esac
-           [[ $is_caddy ]] && update caddy ;;
-        5) get reinstall ;;
-        6) uninstall ;;
-        esac ;;
-    4)  # help
-        [[ $zh == 1 ]] && menu_sub "help" "help 幫助 about 關於 lang 語言 back 返回 exit 退出" || menu_sub "help" "help about lang back exit"
-        case $REPLY in
-        1) load help.sh; show_help ;;
-        2) load help.sh; about ;;
-        3) _dim "  sbx lang zh-TW | sbx lang en" ;;
-        b | B) return ;;
-        e | E | q | Q | exit) msg && exit 0 ;;
-        esac ;;
-    q | Q | quit | e | E | exit | 0)
-        msg "  bye!"
-        exit 0
-        ;;
-    esac
-}
-
-show_menu_items() {
-    if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
-        msg " ${c_dim}[1]${c_none} 配置"
-        msg " ${c_dim}[2]${c_none} 系統"
-        msg " ${c_dim}[3]${c_none} 工具"
-        msg " ${c_dim}[4]${c_none} 幫助"
-        msg " ${c_dim}[0]${c_none} 退出"
-    else
-        msg " ${c_dim}[1]${c_none} config"
-        msg " ${c_dim}[2]${c_none} system"
-        msg " ${c_dim}[3]${c_none} tools"
-        msg " ${c_dim}[4]${c_none} help"
-        msg " ${c_dim}[0]${c_none} exit"
-    fi
-}
-
-menu_sub() {
-    local title=$1; shift
-    msg
-    msg " ${c_bright}▐▌ ${c_dim}${title}${c_none}"
-    msg " ${c_dim}----------------${c_none}"
-    local i=1
-    local is_zh=0
-    [[ -f $is_core_dir/lang ]] && grep -q zh-TW $is_core_dir/lang && is_zh=1
-    read -ra items <<< "$@"
-    if [[ $is_zh == 1 ]]; then
-        local idx=0
-        while [[ $idx -lt ${#items[@]} ]]; do
-            local cmd="${items[$idx]}"
-            local label="${items[$((idx+1))]}"
-            if [[ $label ]]; then
-                msg " [$i] $label"
-            else
-                msg " [$i] $cmd"
-            fi
-            ((i++))
-            idx=$((idx + 2))
-        done
-    else
-        for cmd in "${items[@]}"; do
-            msg " [$i] $cmd"
-            ((i++))
-        done
-    fi
-    echo -ne " ${c_bright}>${c_none} "
-    read -r REPLY
+    load dashboard.sh
+    dashboard_main
 }
 
 
@@ -1896,6 +1772,33 @@ main() {
         msg " ${c_bright}|${c_none}  ${c_dim}sing-box${c_none} ${is_core_ver}${is_caddy_ver}         ${c_bright}|${c_none}"
         msg " ${c_bright}|${c_none}  ${c_dim}WAHSUN${c_none}                        ${c_bright}|${c_none}"
         msg " ${c_bright}+--------------------------------+${c_none}"
+        ;;
+    theme)
+        load theme.sh
+        theme_set ${@:2}
+        ;;
+    plugin)
+        load plugin.sh
+        plugin_main ${@:2}
+        ;;
+    doctor)
+        load doctor.sh
+        doctor_run
+        ;;
+    bench)
+        load bench.sh
+        bench_run ${@:2}
+        ;;
+    create)
+        add
+        ;;
+    matrix)
+        load matrix.sh
+        matrix_set ${@:2}
+        ;;
+    profile)
+        load profile.sh
+        profile_main ${@:2}
         ;;
     h | help | --help)
         load help.sh

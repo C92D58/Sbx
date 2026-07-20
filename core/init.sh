@@ -41,9 +41,24 @@ warn() {
     echo -e "\n ${c_dim}[-]${c_none} $@\n"
 }
 
-# load bash script.
+# load bash script — resolves module paths
 load() {
-    . $is_sh_dir/src/$1
+    local mod_path
+    case $1 in
+        # core modules
+        dispatcher.sh|json.sh|theme.sh|plugin.sh|logger.sh) mod_path="core/$1" ;;
+        # network modules
+        dns.sh|speed.sh)                     mod_path="modules/network/$1" ;;
+        # service modules
+        systemd.sh|caddy.sh|bbr.sh)          mod_path="modules/service/$1" ;;
+        # tools modules
+        backup.sh|check.sh|traffic.sh|log.sh|import.sh|download.sh|help.sh|doctor.sh|bench.sh|profile.sh) mod_path="modules/tools/$1" ;;
+        # ui modules
+        dashboard.sh|matrix.sh|theme_ui.sh)  mod_path="modules/ui/$1" ;;
+        # legacy fallback
+        *) mod_path="src/$1" ;;
+    esac
+    . $is_sh_dir/$mod_path
 }
 
 # wget add --no-check-certificate
@@ -79,6 +94,9 @@ is_log_dir=/var/log/$is_sh_name
 is_sh_bin=/usr/local/bin/$is_sh_name
 is_sh_dir=$is_core_dir/sh
 is_sh_repo=c92d58/$is_sh_name
+THEME_DIR=$is_sh_dir/themes
+PLUGIN_DIR=$is_sh_dir/plugins
+PROFILE_DIR=$is_sh_dir/profiles
 is_pkg="wget unzip tar qrencode bash"
 is_config_json=$is_core_dir/config.json
 is_caddy_bin=/usr/local/bin/caddy
@@ -142,11 +160,18 @@ fi
 # Load language
 is_lang_file=$is_core_dir/lang
 if [[ -f $is_lang_file ]]; then
-    . $is_sh_dir/src/lang/$(cat $is_lang_file).sh
+    . $is_sh_dir/lang/$(cat $is_lang_file).sh
 else
-    . $is_sh_dir/src/lang/en.sh
+    . $is_sh_dir/lang/en.sh
 fi
 
-load core.sh
+# Load theme
+is_theme_file=$is_core_dir/theme
+[[ -f $is_theme_file ]] && is_theme=$(cat $is_theme_file) || is_theme="matrix"
+if [[ -f $is_sh_dir/themes/${is_theme}.sh ]]; then
+    . $is_sh_dir/themes/${is_theme}.sh
+fi
+
+load dispatcher.sh
 [[ ! $args ]] && args=main
 main $args

@@ -93,9 +93,18 @@ for i in ${tmp_var_lists[*]}; do
     export $i=$tmpdir/$i
 done
 
-# load bash script.
+# load bash script — resolves module paths
 load() {
-    . $is_sh_dir/src/$1
+    local mod_path
+    case $1 in
+        dispatcher.sh|json.sh|theme.sh|plugin.sh|logger.sh) mod_path="core/$1" ;;
+        dns.sh|speed.sh)                     mod_path="modules/network/$1" ;;
+        systemd.sh|caddy.sh|bbr.sh)          mod_path="modules/service/$1" ;;
+        backup.sh|check.sh|traffic.sh|log.sh|import.sh|download.sh|help.sh|doctor.sh|bench.sh|profile.sh) mod_path="modules/tools/$1" ;;
+        dashboard.sh|matrix.sh|theme_ui.sh)  mod_path="modules/ui/$1" ;;
+        *) mod_path="src/$1" ;;
+    esac
+    . $is_sh_dir/$mod_path
 }
 
 # wget add --no-check-certificate
@@ -260,7 +269,7 @@ pass_args() {
             shift 2
             ;;
         -l | --local-install)
-            [[ ! -f ${PWD}/src/core.sh || ! -f ${PWD}/$is_sh_name.sh ]] && {
+            [[ ! -f ${PWD}/core/dispatcher.sh || ! -f ${PWD}/$is_sh_name.sh ]] && {
                 err "當前目錄 (${PWD}) 非完整的腳本目錄."
             }
             local_install=1
@@ -463,7 +472,7 @@ main() {
     # write language choice
     [[ -f $tmpdir/lang ]] && cp $tmpdir/lang $is_core_dir/lang
 
-    load core.sh
+    load dispatcher.sh
     # create a reality config
     add reality
     # wait for background tasks (e.g., OpenRC service start)

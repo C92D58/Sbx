@@ -2,276 +2,151 @@
   <b>English</b> | <a href="README.md">繁體中文</a>
 </p>
 
-# sbx
+# sbx — Next Generation sing-box Manager
 
-> sing-box management script — Matrix-themed terminal UI, bilingual, streamlined.
+> Modern sing-box Management Framework — Matrix-themed CLI, plugin-ready, multi-profile.
 
 [![License](https://img.shields.io/badge/license-GPL--3.0-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Linux%20x86__64%20%7C%20ARM64-green)]()
+[![Bash](https://img.shields.io/badge/pure-bash-blue)]()
+
+---
+
+## Why sbx?
+
+| | |
+|---|---|
+| ✓ **Pure Bash** | Zero dependencies beyond bash + jq + curl |
+| ✓ **Beautiful CLI** | Matrix theme + 6 color schemes |
+| ✓ **Multi-language** | Full English / 繁體中文 support |
+| ✓ **Plugin Ready** | Extensible without touching core |
+| ✓ **Profile System** | One-command full config switching |
+| ✓ **Health Scoring** | Visual health scores + system diagnostics |
+| ✓ **Atomic JSON** | Safe config writes (`tmp + mv` pattern) |
+| ✓ **Modern Architecture** | Modular directory, clear framework boundaries |
 
 ---
 
 ## Quick Start
 
 ```bash
-# One-liner install (requires root on Linux VPS)
+# One-line install (requires Linux VPS root)
 bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
-
-# Or local install
-git clone https://github.com/c92d58/Sbx.git
-cd sbx
-bash install.sh
 ```
 
-The installer prompts for language (English / 繁體中文), auto-detects your OS, and downloads all dependencies plus the sing-box core binary.
+Choose your language during install. The script auto-detects your OS, downloads dependencies and the sing-box core.
 
 ---
 
-## Command Reference
-
-### Protocol Management
+## Core Commands
 
 | Command | Description |
 |---------|-------------|
-| `sbx add reality` | Add VLESS-REALITY (default) |
-| `sbx add tuic` | Add TUIC (congestion_control enabled) |
-| `sbx add trojan` | Add Trojan (TLS / no-TLS) |
-| `sbx add hy2` | Add Hysteria2 |
-| `sbx add ss` | Add Shadowsocks (2022 ciphers supported) |
-| `sbx add anytls` | Add AnyTLS (ACME auto-TLS supported) |
-| `sbx add socks` | Add SOCKS5 (username / password auth) |
-| `sbx add `*ws/h2/hu* | Add TLS protocols (auto Caddy reverse proxy) |
-| `sbx del <name>` | Delete config |
-| `sbx info [name]` | View config details |
-| `sbx url <name>` | Show config share URL |
-| `sbx qr <name>` | Generate QR code for config |
-| `sbx change <name> ...` | Change port / uuid / host / path / key / sni / cipher |
+| `sbx` | Launch interactive dashboard |
+| `sbx create` | Interactive config creation |
+| `sbx add <protocol>` | Quick add (reality / tuic / hy2 / trojan / ss…) |
+| `sbx dns <preset>` | DNS setup (NextDNS / Cloudflare / Google…) |
+| `sbx doctor` | System diagnostics (Kernel / BBR / DNS / TLS…) |
+| `sbx bench` | Protocol latency benchmark |
+| `sbx check` | Health check with visual scoring |
+| `sbx profile` | Profile management (save / switch / delete) |
+| `sbx theme` | Theme switching (6 color schemes) |
+| `sbx plugin` | Plugin management |
+| `sbx matrix` | Enter the Matrix — digital rain |
 
-Config files are auto-named with random 5-digit numbers. Each protocol is a standalone JSON file for easy management.
-
-**`sbx change` supported fields:**
-
-```
-port      passwd    id/uuid    host      path
-method    key       sni        web       new
-door-addr door-port full       user
-```
-
-```bash
-sbx change 18347 port 8443           # Change port
-sbx change 18347 id auto             # Auto-generate new UUID
-sbx change 18347 key auto            # Auto-generate new keypair
-sbx change 18347 full auto           # Reset all parameters at once
-sbx fix 18347                        # Alias for full
-sbx fix-all                          # Batch fix all configs
-```
-
-### DNS Management
-
-```bash
-sbx dns nextdns CONFIG_ID [DEVICE]    # NextDNS (DoH) + CF H3 + Google H3 fallback
-sbx dns cf                            # Cloudflare H3
-sbx dns gg                            # Google H3
-sbx dns 11                            # 1.1.1.1 (UDP)
-sbx dns 88                            # 8.8.8.8 (UDP)
-sbx dns family                        # Cloudflare Family (malware filtering)
-sbx dns set <address>                 # Custom DNS (h3:// tls:// https:// tcp:// udp://)
-sbx dns none                          # Clear DNS configuration
-```
-
-**NextDNS multi-server example:**
-
-```bash
-sbx dns nextdns abc123               # Basic setup
-sbx dns nextdns abc123 185-vps       # With device name (identifiable in NextDNS dashboard)
-```
-
-Three-tier DNS fallback: NextDNS (primary) → Cloudflare H3 → Google H3. `geosite-cn` domains automatically use local DNS resolver.
-
-### Speed Test
-
-```bash
-sbx speed vps          # VPS bandwidth test (Cloudflare Speedtest 10MB)
-sbx speed <name>       # Specific config (port check + bandwidth)
-sbx speed              # All configs
-```
-
-### Health Check
-
-```bash
-sbx check [name]       # Validates: file integrity + port listening + core status
-```
-
-Reports a three-item checklist per config. All green = config is healthy.
-
-### Traffic Stats
-
-```bash
-sbx traffic [name]     # Show active TCP connections per config
-```
-
-### Backup & Restore
-
-```bash
-sbx backup             # Create /root/sbx-backup-*.tar.gz
-sbx backup list        # List all backups with file sizes
-sbx restore <file>     # Restore from backup (auto-backs up current config first)
-```
-
-### Log Management
-
-```bash
-sbx log                # Live tail of access log
-sbx log info           # Set log level
-sbx log warn           # Only warnings and above
-sbx log error          # Errors only
-sbx log none           # Disable logging
-sbx log del            # Delete all log files
-```
-
-Log levels: `trace` > `debug` > `info` > `warn` > `error` > `fatal` > `panic`
-
-### Service Control
-
-```bash
-sbx status             # Show sing-box / Caddy service status
-sbx start              # Start sing-box
-sbx stop               # Stop sing-box
-sbx restart            # Restart sing-box
-sbx start caddy        # Start Caddy
-sbx stop caddy         # Stop Caddy
-sbx restart caddy      # Restart Caddy
-sbx t                  # Test run (diagnose startup failures)
-```
-
-### Updates
-
-```bash
-sbx update core        # Update sing-box core (from SagerNet)
-sbx update sh           # Update management script
-sbx update caddy        # Update Caddy web server
-sbx U                   # Quick script update (alias for update sh)
-sbx reinstall           # Reinstall script
-```
-
-### Other Commands
-
-| Command | Description |
-|---------|-------------|
-| `sbx bbr` | Enable BBR TCP congestion control (kernel ≥ 4.9) |
-| `sbx lang zh-TW` | Switch to Traditional Chinese |
-| `sbx lang en` | Switch to English |
-| `sbx version` | Show version information |
-| `sbx ip` | Show server public IP |
-| `sbx pbk` | Generate reality keypair |
-| `sbx ss2022` | Generate Shadowsocks 2022 compatible password |
-| `sbx get-port` | Find an available port |
-| `sbx debug <name>` | Dump config debug info |
-| `sbx gen ...` | Dry-run — print JSON without writing |
-| `sbx no-auto-tls ...` | Add config without automatic TLS |
-| `sbx import` | Import configs from Xray / V2Ray |
-| `sbx fix-config.json` | Rebuild main config file |
-| `sbx fix-caddyfile` | Rebuild Caddyfile |
-| `sbx bin ...` | Run sing-box core binary commands directly |
-| `sbx matrix` | Enter the Matrix — hacker aesthetic effects |
-| `sbx uninstall` | Uninstall completely (optional: remove Caddy) |
+Full reference: [docs/commands.md](docs/commands.md)
 
 ---
 
-## Matrix Effects
+## Dashboard
 
-```bash
-sbx matrix             # Full intro: digital rain → ASCII logo → typewriter status → pulse line
-sbx matrix rain        # 8-second digital rain animation only
-sbx matrix logo        # ASCII art banner only
-```
-
-Also accessible from the main menu (`m` key). Effects include:
-
-- **Matrix Rain** — katakana character cascading waterfall (adapts to terminal size)
-- **ASCII Logo** — Brand banner built with `▐▌ ░▒▓█` block characters
-- **Typewriter Effect** — Characters appear one by one
-- **Glitch Reveal** — Scrambled characters resolve into legible text
-- **Pulse Line** — Scanning line across terminal width
-
----
-
-## UI Style
-
-Matrix-themed — monochrome green on black, no background colors, clean tabular alignment:
+Run `sbx` to enter the dashboard:
 
 ```
 ┌─────────────────────────────────────────────┐
-│  ▀█▀ █▀▄ ▀ ▀   sbx v1.0  >> running    │
-│   █  █▀  ▀█▀   sing-box manager          │
+│  ▐▌ ▀█▀ █▀▄ ▀ ▀   sbx v2.0  >> running    │
+│  ▐▌  █  █▀  ▀█▀   modern sing-box manager  │
 └─────────────────────────────────────────────┘
 
-[1] config   [2] dns        [3] tools
-[4] system   [5] help       [m] matrix
+  Health: 98/100 ★★★★★  3 configs
 
->>
+  [1] Create       [2] Manage
+  [3] DNS          [4] Tools
+  [5] Profiles     [6] System
+  [7] Themes       [8] Plugins
+  [9] Help         [0] Exit
 
-> 18347
-protocol              VLESS-REALITY  ← dim label  bright value
-address               example.com
-port                  8443
-...
-> URL
-vless://...@example.com:8443?...  ← bright share link
+  [m] Matrix
+```
 
-[!] error message  (red — critical only)
-[-] warning notice (dim green — decoration / hints)
->> success message (bright green — operation OK)
+All features accessible from the dashboard — no need to memorize commands.
+
+---
+
+## Doctor
+
+```bash
+$ sbx doctor
+
+  Kernel          5.15.0        PASS
+  System Time     synced        PASS
+  BBR             enabled       PASS
+  Firewall        open          PASS
+  Certificate     valid         PASS
+  Port            3 listening   PASS
+  DNS             resolving     PASS
+  sing-box        running       PASS
+
+  >> Your server is healthy.
 ```
 
 ---
 
-## Directory Structure
+## Benchmark
 
-### After installation (`/etc/sbx/`)
+```bash
+$ sbx bench
 
+  CONFIG     PROTO    PORT     LATENCY
+  ----------------------------------------
+  18347      vless    8443     12 ms
+  29451      tuic     9001     8 ms
+  35712      hy2      50001    15 ms
+
+  >> Recommended: 29451 (tuic :9001) (8 ms)
 ```
-/etc/sbx/
-├── bin/
-│   ├── sing-box          # core binary (SagerNet/sing-box)
-│   ├── tls.cer           # temporary TLS certificate
-│   └── tls.key           # temporary TLS key
-├── conf/
-│   └── *.json            # per-protocol config (e.g., 18347.json)
-├── config.json           # main config (imports conf/*.json)
-├── sh/                   # script directory
-│   ├── sbx.sh            # entry point
-│   ├── install.sh        # installer
-│   ├── src/              # modules
-│   │   ├── core.sh       # main dispatcher (CLI + menu)
-│   │   ├── init.sh       # init (variables / language / environment)
-│   │   ├── dns.sh        # DNS management
-│   │   ├── speed.sh      # speed test
-│   │   ├── check.sh      # health check
-│   │   ├── backup.sh     # backup & restore
-│   │   ├── traffic.sh    # traffic stats
-│   │   ├── log.sh        # log management
-│   │   ├── matrix.sh     # Matrix visual effects
-│   │   ├── bbr.sh        # BBR congestion control
-│   │   ├── caddy.sh      # Caddy TLS integration
-│   │   ├── download.sh   # core/script downloader
-│   │   ├── systemd.sh    # systemd/OpenRC service
-│   │   ├── import.sh     # config import
-│   │   ├── help.sh       # help & about
-│   │   └── lang/         # language packs
-│   │       ├── en.sh     # English
-│   │       └── zh-TW.sh  # Traditional Chinese
-│   └── tools/
-│       └── qr.html       # QR code generator
-└── lang                  # language selection file
+
+---
+
+## Themes
+
+```bash
+sbx theme matrix         # Classic green (default)
+sbx theme catppuccin     # Catppuccin Mocha
+sbx theme nord           # Nord
+sbx theme dracula        # Dracula
+sbx theme gruvbox        # Gruvbox
+sbx theme tokyo-night    # Tokyo Night
+sbx theme list           # List all themes
+```
+
+---
+
+## Profiles
+
+```bash
+sbx profile save hk      # Save current config
+sbx profile switch us    # One-command full switch
+sbx profile list         # List all profiles
+sbx profile delete old   # Delete a profile
 ```
 
 ---
 
 ## Supported Protocols
 
-| Protocol | Transport | TLS Support | Command |
-|----------|-----------|-------------|---------|
+| Protocol | Transport | TLS | Command |
+|----------|-----------|-----|---------|
 | VLESS-REALITY | TCP / H2 | Reality | `sbx add reality` |
 | VLESS-WS-TLS | WebSocket | TLS (Caddy) | `sbx add vws` |
 | VLESS-H2-TLS | HTTP/2 | TLS (Caddy) | `sbx add vh2` |
@@ -289,24 +164,52 @@ vless://...@example.com:8443?...  ← bright share link
 
 ---
 
+## Architecture
+
+```
+/etc/sbx/sh/
+├── core/                  # Framework core
+├── modules/
+│   ├── network/           # DNS / Speed / Protocols
+│   ├── service/           # systemd / Caddy / BBR
+│   ├── tools/             # Backup / Check / Traffic / Log / Doctor / Bench
+│   └── ui/                # Dashboard / Matrix / Theme UI
+├── themes/                # 6 color schemes
+├── plugins/               # Extensible plugins
+├── profiles/              # Config snapshots
+└── lang/                  # Language packs
+```
+
+---
+
+## Documentation
+
+- [Full Command Reference](docs/commands.md)
+- [DNS Configuration](docs/dns.md)
+- [Theme Guide](docs/themes.md)
+- [Plugin Development](docs/plugins.md)
+- [Profile Usage](docs/profiles.md)
+
+---
+
 ## Technical Details
 
-- **Core**: Uses SagerNet/sing-box, auto-fetches latest from GitHub Releases
-- **Init system**: Supports both systemd and OpenRC
-- **Operating systems**: Ubuntu / Debian / CentOS / Alpine / openSUSE
-- **Architecture**: x86_64 / ARM64
-- **Acceleration**: Auto-enables BBR (kernel ≥ 4.9)
-- **NTP**: Auto time-sync via Apple NTP server
-- **Bilingual**: Full English + Traditional Chinese language packs, selectable at install
-- **Import**: Supports importing from Xray / V2Ray configurations
+- **Core**: SagerNet/sing-box, latest from GitHub Releases
+- **Init system**: systemd + OpenRC
+- **OS**: Ubuntu / Debian / CentOS / Alpine / openSUSE
+- **Arch**: x86_64 / ARM64
+- **Acceleration**: Auto BBR (kernel ≥ 4.9)
+- **NTP**: Auto time-sync
+- **Bilingual**: Full English + 繁體中文
+
+---
 
 ## Security
 
-- Uses `jq --arg` for safe variable passing (prevents JSON injection)
-- Atomic config writes (`tmp + mv` pattern to prevent truncation)
-- IP parsing via `sed` extraction (not `eval` / `export`)
-- Safe temporary directory creation (`mktemp -d`)
-- Runs as root by default (standard VPS practice)
+- `jq --arg` safe variable passing (JSON injection prevention)
+- Atomic config writes (`tmp + mv` pattern)
+- Safe IP parsing via `sed` (no `eval`/`export`)
+- Secure temp dir creation (`mktemp -d`)
 
 ---
 
