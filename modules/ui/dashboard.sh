@@ -58,14 +58,12 @@ dashboard_nav() {
 
     if [[ $zh == 1 ]]; then
         echo -e "  ${c_dim}[1]${c_none} 建立配置     ${c_dim}[2]${c_none} 管理配置"
-        echo -e "  ${c_dim}[3]${c_none} DNS          ${c_dim}[4]${c_none} 工具"
-        echo -e "  ${c_dim}[5]${c_none} 系統         ${c_dim}[6]${c_none} 設定"
-        echo -e "  ${c_dim}[0]${c_none} 離開"
+        echo -e "  ${c_dim}[3]${c_none} 工具         ${c_dim}[4]${c_none} 系統"
+        echo -e "  ${c_dim}[5]${c_none} 設定         ${c_dim}[0]${c_none} 離開"
     else
         echo -e "  ${c_dim}[1]${c_none} Create       ${c_dim}[2]${c_none} Manage"
-        echo -e "  ${c_dim}[3]${c_none} DNS          ${c_dim}[4]${c_none} Tools"
-        echo -e "  ${c_dim}[5]${c_none} System       ${c_dim}[6]${c_none} Settings"
-        echo -e "  ${c_dim}[0]${c_none} Exit"
+        echo -e "  ${c_dim}[3]${c_none} Tools        ${c_dim}[4]${c_none} System"
+        echo -e "  ${c_dim}[5]${c_none} Settings     ${c_dim}[0]${c_none} Exit"
     fi
     echo
 }
@@ -179,29 +177,8 @@ dashboard_main() {
         esac
         ;;
 
-    # ── [3] DNS ─────────────────────────────────────────────
+    # ── [3] Tools ───────────────────────────────────────────
     3)
-        if [[ $zh == 1 ]]; then
-            dashboard_sub "dns" "NextDNS" "Cloudflare" "Google" "1.1.1.1" "8.8.8.8" "Family" "自訂" "清除" "返回"
-        else
-            dashboard_sub "dns" "NextDNS" "Cloudflare" "Google" "1.1.1.1" "8.8.8.8" "Family" "Custom" "Clear" "Back"
-        fi
-        load dns.sh
-        case $REPLY in
-            1) dns_set_nextdns ; _pause ;;
-            2) dns_set cf ; _pause ;;
-            3) dns_set gg ; _pause ;;
-            4) dns_set 11 ; _pause ;;
-            5) dns_set 88 ; _pause ;;
-            6) dns_set family ; _pause ;;
-            7) dns_set set ; _pause ;;
-            8) dns_set none ; _pause ;;
-            *) return ;;
-        esac
-        ;;
-
-    # ── [4] Tools ───────────────────────────────────────────
-    4)
         if [[ $zh == 1 ]]; then
             dashboard_sub "tools" "測速" "健康檢查" "備份" "流量統計" "返回"
         else
@@ -216,8 +193,8 @@ dashboard_main() {
         esac
         ;;
 
-    # ── [5] System ──────────────────────────────────────────
-    5)
+    # ── [4] System ──────────────────────────────────────────
+    4)
         if [[ $zh == 1 ]]; then
             dashboard_sub "system" "運行管理" "BBR" "日誌" "更新" "卸載" "返回"
         else
@@ -256,8 +233,8 @@ dashboard_main() {
         esac
         ;;
 
-    # ── [6] Settings (themes / plugins / help) ──────────────
-    6)
+    # ── [5] Settings (themes / plugins / help) ──────────────
+    5)
         if [[ $zh == 1 ]]; then
             dashboard_sub "settings" "主題" "插件" "幫助" "語言" "返回"
         else

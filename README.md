@@ -47,7 +47,6 @@ bash install.sh -l
 |------|------|
 | `sbx` | 互動儀表板 |
 | `sbx add <protocol>` | 添加配置（reality / tuic / hy2 / trojan / ss …） |
-| `sbx dns <preset>` | DNS 設定 |
 | `sbx check` | 健康檢查（含評分） |
 | `sbx theme` | 主題切換 |
 
@@ -61,8 +60,8 @@ bash install.sh -l
   sbx v2.0  ▶  running
   Next Generation sing-box Manager
 
-  [1] Create    [2] Manage    [3] DNS
-  [4] Tools     [5] System    [6] Settings
+  [1] Create    [2] Manage
+  [3] Tools     [4] System    [5] Settings
   [0] Exit
 ```
 

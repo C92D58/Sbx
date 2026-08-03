@@ -45,7 +45,6 @@ bash install.sh -l
 |---------|-------------|
 | `sbx` | Interactive dashboard |
 | `sbx add <protocol>` | Add config (reality / tuic / hy2 / trojan / ss …) |
-| `sbx dns <preset>` | DNS setup |
 | `sbx check` | Health check with scoring |
 | `sbx theme` | Theme switching |
 
@@ -59,8 +58,8 @@ bash install.sh -l
   sbx v2.0  ▶  running
   Next Generation sing-box Manager
 
-  [1] Create    [2] Manage    [3] DNS
-  [4] Tools     [5] System    [6] Settings
+  [1] Create    [2] Manage
+  [3] Tools     [4] System    [5] Settings
   [0] Exit
 ```
 

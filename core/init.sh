@@ -48,7 +48,7 @@ load() {
         # core modules
         dispatcher.sh|json.sh|theme.sh|plugin.sh|logger.sh) mod_path="core/$1" ;;
         # network modules
-        dns.sh|speed.sh)                     mod_path="modules/network/$1" ;;
+        speed.sh)                            mod_path="modules/network/$1" ;;
         # service modules
         systemd.sh|caddy.sh|bbr.sh)          mod_path="modules/service/$1" ;;
         # tools modules

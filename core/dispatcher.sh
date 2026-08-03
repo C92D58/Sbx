@@ -1642,11 +1642,6 @@ main() {
         manage restart &
         [[ $is_del_host ]] && manage restart caddy &
         ;;
-    dns)
-        load dns.sh
-        dns_set ${@:2}
-        ;;
-
     lang)
         case ${2,,} in
         zh-tw|zh)
