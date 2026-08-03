@@ -66,7 +66,7 @@ is_conf_dir=$is_core_dir/conf
 is_log_dir=/var/log/$is_sh_name
 is_sh_bin=/usr/local/bin/$is_sh_name
 is_sh_dir=$is_core_dir/sh
-is_sh_repo=c92d58/$is_sh_name
+is_sh_repo=C92D58/$is_sh_name
 is_pkg="wget tar bash"
 # Alpine: gcompat provides glibc compatibility for prebuilt binaries
 [[ $cmd =~ apk ]] && is_pkg="$is_pkg gcompat jq"
@@ -110,7 +110,12 @@ load() {
 # wget add --no-check-certificate
 _wget() {
     [[ $proxy ]] && export https_proxy=$proxy
-    wget --no-check-certificate $*
+    # private repo: use GITHUB_TOKEN to authenticate raw/archive downloads
+    if [[ $GITHUB_TOKEN ]]; then
+        wget --no-check-certificate --header="Authorization: token $GITHUB_TOKEN" $*
+    else
+        wget --no-check-certificate $*
+    fi
 }
 
 # print a mesage

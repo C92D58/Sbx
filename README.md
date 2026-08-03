@@ -20,8 +20,21 @@
 
 ## 快速安裝
 
+> ⚠️ **Repo 目前為 private** — 安裝需提供 GitHub Token 認證。
+
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
+# 1. 設定 GitHub Token（repo 為 private，需有 repo 讀取權限）
+export GITHUB_TOKEN=ghp_xxxx
+
+# 2. 快速安裝
+bash <(curl -sL https://raw.githubusercontent.com/C92D58/Sbx/main/install.sh)
+```
+
+**本地安裝（不需 token）：**
+
+```bash
+git clone https://github.com/C92D58/Sbx.git && cd Sbx
+bash install.sh -l
 ```
 
 ---
