@@ -59,18 +59,15 @@ dashboard_nav() {
     if [[ $zh == 1 ]]; then
         echo -e "  ${c_dim}[1]${c_none} 建立配置     ${c_dim}[2]${c_none} 管理配置"
         echo -e "  ${c_dim}[3]${c_none} DNS          ${c_dim}[4]${c_none} 工具"
-        echo -e "  ${c_dim}[5]${c_none} 配置檔       ${c_dim}[6]${c_none} 系統"
-        echo -e "  ${c_dim}[7]${c_none} 主題         ${c_dim}[8]${c_none} 插件"
-        echo -e "  ${c_dim}[9]${c_none} 幫助         ${c_dim}[0]${c_none} 離開"
+        echo -e "  ${c_dim}[5]${c_none} 系統         ${c_dim}[6]${c_none} 設定"
+        echo -e "  ${c_dim}[0]${c_none} 離開"
     else
         echo -e "  ${c_dim}[1]${c_none} Create       ${c_dim}[2]${c_none} Manage"
         echo -e "  ${c_dim}[3]${c_none} DNS          ${c_dim}[4]${c_none} Tools"
-        echo -e "  ${c_dim}[5]${c_none} Profiles     ${c_dim}[6]${c_none} System"
-        echo -e "  ${c_dim}[7]${c_none} Themes       ${c_dim}[8]${c_none} Plugins"
-        echo -e "  ${c_dim}[9]${c_none} Help         ${c_dim}[0]${c_none} Exit"
+        echo -e "  ${c_dim}[5]${c_none} System       ${c_dim}[6]${c_none} Settings"
+        echo -e "  ${c_dim}[0]${c_none} Exit"
     fi
     echo
-    echo -e "  ${c_dim}[m]${c_none} Matrix"
 }
 
 # ── Sub menu helper ──────────────────────────────────────────
@@ -206,58 +203,37 @@ dashboard_main() {
     # ── [4] Tools ───────────────────────────────────────────
     4)
         if [[ $zh == 1 ]]; then
-            dashboard_sub "tools" "測速" "健康檢查" "系統診斷" "協議基準測試" "備份" "流量統計" "日誌" "返回"
+            dashboard_sub "tools" "測速" "健康檢查" "備份" "流量統計" "返回"
         else
-            dashboard_sub "tools" "speed" "health" "doctor" "bench" "backup" "traffic" "log" "back"
+            dashboard_sub "tools" "speed" "health" "backup" "traffic" "back"
         fi
         case $REPLY in
             1) load speed.sh; speed_set ; _pause ;;
             2) load check.sh; check_set ; _pause ;;
-            3) load doctor.sh; doctor_run ; _pause ;;
-            4) load bench.sh; bench_run ; _pause ;;
-            5) load backup.sh; backup_set ; _pause ;;
-            6) load traffic.sh; traffic_set ; _pause ;;
-            7) load log.sh; log_set ; _pause ;;
+            3) load backup.sh; backup_set ; _pause ;;
+            4) load traffic.sh; traffic_set ; _pause ;;
             *) return ;;
         esac
         ;;
 
-    # ── [5] Profiles ────────────────────────────────────────
+    # ── [5] System ──────────────────────────────────────────
     5)
-        load profile.sh
         if [[ $zh == 1 ]]; then
-            dashboard_sub "profiles" "列表" "儲存" "切換" "刪除" "返回"
+            dashboard_sub "system" "運行管理" "BBR" "日誌" "更新" "卸載" "返回"
         else
-            dashboard_sub "profiles" "list" "save" "switch" "delete" "back"
-        fi
-        case $REPLY in
-            1) profile_main list ; _pause ;;
-            2) profile_main save ; _pause ;;
-            3) profile_main switch ; _pause ;;
-            4) profile_main delete ; _pause ;;
-            *) return ;;
-        esac
-        ;;
-
-    # ── [6] System ──────────────────────────────────────────
-    6)
-        if [[ $zh == 1 ]]; then
-            dashboard_sub "system" "運行管理" "BBR" "日誌" "更新" "重裝" "卸載" "返回"
-        else
-            dashboard_sub "system" "service" "BBR" "log" "update" "reinstall" "uninstall" "back"
+            dashboard_sub "system" "service" "BBR" "log" "update" "uninstall" "back"
         fi
         case $REPLY in
             1)  # service submenu
                 if [[ $zh == 1 ]]; then
-                    dashboard_sub "service" "啟動" "停止" "重啟" "狀態" "返回"
+                    dashboard_sub "service" "啟動" "停止" "重啟" "返回"
                 else
-                    dashboard_sub "service" "start" "stop" "restart" "status" "back"
+                    dashboard_sub "service" "start" "stop" "restart" "back"
                 fi
                 case $REPLY in
                     1) manage start & _pause ;;
                     2) manage stop & _pause ;;
                     3) manage restart & _pause ;;
-                    4) ;;  # status already shows
                     *) return ;;
                 esac
                 ;;
@@ -275,86 +251,79 @@ dashboard_main() {
                     *) return ;;
                 esac
                 ;;
-            5) get reinstall ; _pause ;;
-            6) uninstall ; _pause ;;
+            5) uninstall ; _pause ;;
             *) return ;;
         esac
         ;;
 
-    # ── [7] Themes ──────────────────────────────────────────
-    7)
-        load theme.sh
-        echo
-        _dim "  >> available themes"
-        echo
-        local themes=()
-        for f in "$THEME_DIR"/*.sh; do
-            [[ -f "$f" ]] || continue
-            themes+=("$(basename "$f" .sh)")
-        done
-        local i=1
-        for t in "${themes[@]}"; do
-            local marker=" "
-            [[ "$t" == "$is_theme" ]] && marker="${c_bright}*${c_none}"
-            echo -e "  ${c_dim}[$i]${c_none} $marker ${c_bright}$t${c_none}"
-            ((i++))
-        done
-        echo
-        echo -ne " ${c_dim}select theme [1-${#themes[@]} / Enter=keep]:${c_none} "
-        read -r theme_pick
-        if [[ $theme_pick =~ ^[0-9]+$ && $theme_pick -ge 1 && $theme_pick -le ${#themes[@]} ]]; then
-            theme_set "${themes[$((theme_pick-1))]}"
-        fi
-        _pause
-        ;;
-
-    # ── [8] Plugins ─────────────────────────────────────────
-    8)
-        load plugin.sh
-        echo
-        _dim "  >> installed plugins"
-        echo
-        local plugins=()
-        if [[ -d "$PLUGIN_DIR" ]]; then
-            for d in "$PLUGIN_DIR"/*/; do
-                [[ -f "$d/plugin.sh" ]] || continue
-                plugins+=("$(basename "$d")")
-            done
-        fi
-        if [[ ${#plugins[@]} -eq 0 ]]; then
-            _dim "  no plugins installed"
-        else
-            local i=1
-            for p in "${plugins[@]}"; do
-                local info=$(. "$PLUGIN_DIR/$p/plugin.sh" && plugin_info)
-                local name=$(echo "$info" | cut -d'|' -f1)
-                local desc=$(echo "$info" | cut -d'|' -f3)
-                echo -e "  ${c_dim}[$i]${c_none} ${c_bright}$name${c_none}  ${c_dim}$desc${c_none}"
-                ((i++))
-            done
-            echo
-            echo -ne " ${c_dim}select plugin [1-${#plugins[@]} / Enter=back]:${c_none} "
-            read -r plugin_pick
-            if [[ $plugin_pick =~ ^[0-9]+$ && $plugin_pick -ge 1 && $plugin_pick -le ${#plugins[@]} ]]; then
-                echo
-                plugin_dispatch "${plugins[$((plugin_pick-1))]}"
-            fi
-        fi
-        _pause
-        ;;
-
-    # ── [9] Help ────────────────────────────────────────────
-    9)
-        load help.sh
+    # ── [6] Settings (themes / plugins / help) ──────────────
+    6)
         if [[ $zh == 1 ]]; then
-            dashboard_sub "help" "幫助" "關於" "語言" "返回"
+            dashboard_sub "settings" "主題" "插件" "幫助" "語言" "返回"
         else
-            dashboard_sub "help" "help" "about" "language" "back"
+            dashboard_sub "settings" "theme" "plugin" "help" "language" "back"
         fi
         case $REPLY in
-            1) show_help ; _pause ;;
-            2) about ; _pause ;;
-            3)
+            1)  # theme picker
+                load theme.sh
+                echo
+                _dim "  >> available themes"
+                echo
+                local themes=()
+                for f in "$THEME_DIR"/*.sh; do
+                    [[ -f "$f" ]] || continue
+                    themes+=("$(basename "$f" .sh)")
+                done
+                local i=1
+                for t in "${themes[@]}"; do
+                    local marker=" "
+                    [[ "$t" == "$is_theme" ]] && marker="${c_bright}*${c_none}"
+                    echo -e "  ${c_dim}[$i]${c_none} $marker ${c_bright}$t${c_none}"
+                    ((i++))
+                done
+                echo
+                echo -ne " ${c_dim}select theme [1-${#themes[@]} / Enter=keep]:${c_none} "
+                read -r theme_pick
+                if [[ $theme_pick =~ ^[0-9]+$ && $theme_pick -ge 1 && $theme_pick -le ${#themes[@]} ]]; then
+                    theme_set "${themes[$((theme_pick-1))]}"
+                fi
+                _pause
+                ;;
+            2)  # plugin picker
+                load plugin.sh
+                echo
+                _dim "  >> installed plugins"
+                echo
+                local plugins=()
+                if [[ -d "$PLUGIN_DIR" ]]; then
+                    for d in "$PLUGIN_DIR"/*/; do
+                        [[ -f "$d/plugin.sh" ]] || continue
+                        plugins+=("$(basename "$d")")
+                    done
+                fi
+                if [[ ${#plugins[@]} -eq 0 ]]; then
+                    _dim "  no plugins installed"
+                else
+                    local i=1
+                    for p in "${plugins[@]}"; do
+                        local info=$(. "$PLUGIN_DIR/$p/plugin.sh" && plugin_info)
+                        local name=$(echo "$info" | cut -d'|' -f1)
+                        local desc=$(echo "$info" | cut -d'|' -f3)
+                        echo -e "  ${c_dim}[$i]${c_none} ${c_bright}$name${c_none}  ${c_dim}$desc${c_none}"
+                        ((i++))
+                    done
+                    echo
+                    echo -ne " ${c_dim}select plugin [1-${#plugins[@]} / Enter=back]:${c_none} "
+                    read -r plugin_pick
+                    if [[ $plugin_pick =~ ^[0-9]+$ && $plugin_pick -ge 1 && $plugin_pick -le ${#plugins[@]} ]]; then
+                        echo
+                        plugin_dispatch "${plugins[$((plugin_pick-1))]}"
+                    fi
+                fi
+                _pause
+                ;;
+            3) load help.sh; show_help ; _pause ;;
+            4)
                 echo -e "  ${c_dim}sbx lang zh-TW${c_none}"
                 echo -e "  ${c_dim}sbx lang en${c_none}"
                 _pause
@@ -367,13 +336,6 @@ dashboard_main() {
     0 | q | Q | exit)
         echo -e "  ${c_dim}bye!${c_none}"
         exit 0
-        ;;
-
-    # ── [m] Matrix ──────────────────────────────────────────
-    m | M)
-        load matrix.sh
-        matrix_set
-        is_sbx_splash=0
         ;;
 
     # ── silent refresh (empty Enter) ────────────────────────

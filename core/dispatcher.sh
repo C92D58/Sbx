@@ -33,27 +33,6 @@ ss_method_list=(
     2022-blake3-aes-256-gcm
     2022-blake3-chacha20-poly1305
 )
-mainmenu=(
-    "add config"
-    "change config"
-    "view config"
-    "delete config"
-    "NextDNS"
-    "DNS preset"
-    "speed test"
-    "health check"
-    "backup / restore"
-    "traffic stats"
-    "start / stop / restart"
-    "BBR"
-    "log"
-    "update"
-    "reinstall"
-    "uninstall"
-    "help"
-    "about"
-    "language"
-)
 info_list=(
     "$L_INFO_PROTOCOL (protocol)"
     "$L_INFO_ADDRESS (address)"
@@ -263,11 +242,6 @@ ask() {
         is_opt_msg="\n請選擇配置:\n"
         is_ask_set=is_config_file
         ;;
-    mainmenu)
-        is_tmp_list=("${mainmenu[@]}")
-        is_ask_set=is_main_pick
-        is_emtpy_exit=1
-        ;;
     esac
     msg $is_opt_msg
     [[ ! $is_opt_input_msg ]] && is_opt_input_msg="請選擇 $(_bright 1-${#is_tmp_list[@]}):"
@@ -277,9 +251,6 @@ ask() {
         read REPLY
         [[ ! $REPLY && $is_emtpy_exit ]] && exit
         [[ ! $REPLY && $is_default_arg ]] && export $is_ask_set=$is_default_arg && break
-        [[ "$REPLY" == "${is_str}2${is_get}3${is_opt}3" && $is_ask_set == 'is_main_pick' ]] && {
-            msg "\n${is_get}2${is_str}3${is_msg}3b${is_tmp}o${is_opt}y\n" && exit
-        }
         if [[ ! $is_tmp_list ]]; then
             [[ $(grep port <<<$is_ask_set) ]] && {
                 [[ ! $(is_test port "$REPLY") ]] && {
