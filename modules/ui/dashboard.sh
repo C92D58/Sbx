@@ -43,11 +43,17 @@ dashboard_health() {
     local config_count=$(ls "$is_conf_dir"/*.json 2>/dev/null | wc -l | tr -d ' ')
 
     local stars=""
+    # h=2 → ★★★★★, h=1 → ★★★☆☆, h=0 → ★☆☆☆☆
     for ((i=0; i<5; i++)); do
-        [[ $i -lt $h || $h -ge 3 ]] && stars+="${c_bright}★${c_none}" || stars+="${c_dim}☆${c_none}"
+        if [[ $h -ge 2 && $i -lt 5 ]] || [[ $h -eq 1 && $i -lt 3 ]] || [[ $h -eq 0 && $i -lt 1 ]]; then
+            stars+="${c_bright}★${c_none}"
+        else
+            stars+="${c_dim}☆${c_none}"
+        fi
     done
 
-    echo -e "  Health: ${c_bright}$(( h * 25 + 25 ))/100${c_none} $stars  ${c_dim}${config_count} configs${c_none}"
+    # h ∈ {0,1,2}: 2 checks × 50 = 100 max
+    echo -e "  Health: ${c_bright}$(( h * 50 ))/100${c_none} $stars  ${c_dim}${config_count} configs${c_none}"
     echo
 }
 
