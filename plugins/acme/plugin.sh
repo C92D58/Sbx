@@ -194,17 +194,13 @@ acme_main() {
         renew|refresh)       _acme_renew ;;
         status|list|info)    _acme_status ;;
         *)
-            echo
-            _bright "  ▐▌ ACME Certificate Manager v${PLUGIN_ACME_VER}"
-            _dim   "  ▐▌ SSL/TLS certificate management with acme.sh"
-            echo
-            echo -e "  ${c_dim}commands:${c_none}"
-            echo -e "  ${c_bright}setup${c_none}       — install acme.sh"
-            echo -e "  ${c_bright}issue <domain>${c_none} — issue certificate"
-            echo -e "  ${c_bright}renew${c_none}       — renew all certificates"
-            echo -e "  ${c_bright}status${c_none}      — show certificate status"
-            echo
-            _acme_status
+            plugin_menu "ACME Certificate Manager v${PLUGIN_ACME_VER}" \
+                "SSL/TLS certificate management with acme.sh" \
+                "setup" "setup — install acme.sh" \
+                "issue" "issue — issue certificate" \
+                "renew" "renew — renew all certificates" \
+                "status" "status — show certificate status"
+            [[ $REPLY ]] && acme_main "$REPLY"
             ;;
     esac
 }

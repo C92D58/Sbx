@@ -262,16 +262,14 @@ telegram_main() {
         on|enable)             _telegram_toggle on ;;
         off|disable)           _telegram_toggle off ;;
         *)
-            echo
-            _bright "  ▐▌ Telegram Bot v${PLUGIN_TELEGRAM_VER}"
-            _dim   "  ▐▌ instant notifications & health reports"
-            echo
-            echo -e "  ${c_dim}commands:${c_none}"
-            echo -e "  ${c_bright}setup${c_none}   — configure bot token and chat ID"
-            echo -e "  ${c_bright}test${c_none}    — send test message"
-            echo -e "  ${c_bright}health${c_none}  — send health report"
-            echo -e "  ${c_bright}on${c_none}      — enable notifications"
-            echo -e "  ${c_bright}off${c_none}     — disable notifications"
+            plugin_menu "Telegram Bot v${PLUGIN_TELEGRAM_VER}" \
+                "instant notifications & health reports" \
+                "setup" "setup — configure bot token and chat ID" \
+                "test" "test — send test message" \
+                "health" "health — send health report" \
+                "on" "on — enable notifications" \
+                "off" "off — disable notifications"
+            [[ $REPLY ]] && telegram_main "$REPLY"
             echo
             if [[ -f "$PLUGIN_TELEGRAM_CONF" ]]; then
                 . "$PLUGIN_TELEGRAM_CONF"

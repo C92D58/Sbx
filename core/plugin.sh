@@ -45,6 +45,34 @@ plugin_dispatch() {
     fi
 }
 
+# ── Numbered plugin menu helper ──────────────────────────────
+# usage: plugin_menu <title> <desc> <cmd1> <label1> <cmd2> <label2> ...
+plugin_menu() {
+    local title=$1 desc=$2
+    shift 2
+    echo
+    _bright "  ▐▌ $title"
+    _dim   "  ▐▌ $desc"
+    echo
+    local i=1
+    local -a cmds labels
+    while [[ $# -gt 0 ]]; do
+        cmds+=("$1")
+        labels+=("$2")
+        echo -e "  ${c_dim}[$i]${c_none} ${c_bright}$2${c_none}"
+        ((i++))
+        shift 2
+    done
+    echo -e "  ${c_dim}[$i]${c_none} ${c_dim}back${c_none}"
+    echo -ne " ${c_bright}>${c_none} "
+    read -r REPLY
+    if [[ $REPLY =~ ^[0-9]+$ && $REPLY -ge 1 && $REPLY -le ${#cmds[@]} ]]; then
+        REPLY="${cmds[$((REPLY-1))]}"
+    else
+        REPLY=
+    fi
+}
+
 plugin_list() {
     echo
     _bright "  ▐▌ plugins"

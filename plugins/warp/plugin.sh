@@ -193,17 +193,13 @@ warp_main() {
         stop|disable|off)     _warp_stop ;;
         status|info)          _warp_status ;;
         *)
-            echo
-            _bright "  ▐▌ Cloudflare WARP v${PLUGIN_WARP_VER}"
-            _dim   "  ▐▌ route traffic through WARP (WireGuard mode)"
-            echo
-            echo -e "  ${c_dim}commands:${c_none}"
-            echo -e "  ${c_bright}setup${c_none}   — install & configure WARP"
-            echo -e "  ${c_bright}start${c_none}   — enable WARP outbound"
-            echo -e "  ${c_bright}stop${c_none}    — disable WARP outbound"
-            echo -e "  ${c_bright}status${c_none}  — show WARP status"
-            echo
-            _warp_status
+            plugin_menu "Cloudflare WARP v${PLUGIN_WARP_VER}" \
+                "route traffic through WARP (WireGuard mode)" \
+                "setup" "setup — install & configure WARP" \
+                "start" "start — enable WARP outbound" \
+                "stop" "stop — disable WARP outbound" \
+                "status" "status — show WARP status"
+            [[ $REPLY ]] && warp_main "$REPLY"
             ;;
     esac
 }
