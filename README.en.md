@@ -20,17 +20,11 @@
 
 ## Quick Start
 
-> ⚠️ **Repo is currently private** — installation requires a GitHub Token.
-
 ```bash
-# 1. Set GitHub Token (private repo — needs repo read permission)
-export GITHUB_TOKEN=ghp_xxxx
-
-# 2. Quick install
 bash <(curl -sL https://raw.githubusercontent.com/C92D58/Sbx/main/install.sh)
 ```
 
-**Local install (no token needed):**
+**Local install:**
 
 ```bash
 git clone https://github.com/C92D58/Sbx.git && cd Sbx
