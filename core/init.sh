@@ -64,6 +64,10 @@ load() {
 # wget add --no-check-certificate
 _wget() {
     [[ $proxy ]] && export https_proxy=$proxy
+    # auto-load GITHUB_TOKEN from token file if not set
+    if [[ ! $GITHUB_TOKEN && -f /etc/$is_sh_name/token ]]; then
+        export GITHUB_TOKEN=$(cat /etc/$is_sh_name/token)
+    fi
     # private repo: use GITHUB_TOKEN to authenticate raw/archive downloads
     if [[ $GITHUB_TOKEN ]]; then
         wget --no-check-certificate --header="Authorization: token $GITHUB_TOKEN" "$@"
