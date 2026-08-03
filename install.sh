@@ -458,8 +458,10 @@ main() {
     # jq
     [[ $jq_not_found ]] && mv -f $is_jq_ok /usr/bin/jq
 
-    # chmod
+    # chmod — 確保所有腳本可執行（tar 解壓可能丟失執行位）
     chmod +x $is_core_bin $is_sh_bin /usr/bin/jq ${is_sh_bin/$is_sh_name/sb}
+    chmod +x $is_sh_dir/$is_sh_name.sh
+    find $is_sh_dir -name "*.sh" -exec chmod +x {} \;
 
     # create log dir
     mkdir -p $is_log_dir
