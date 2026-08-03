@@ -354,9 +354,10 @@ create() {
         else
             [[ ! $is_ntp_on ]] && is_ntp=
         fi
+        is_clash_api='experimental:{"clash_api":{"external_controller":"127.0.0.1:9090","secret":"sbx"}},'
         jq -n \
             --arg log_dir "$is_log_dir" \
-            '{log:{output:($log_dir + "/access.log"), level:"info", timestamp:true}, dns:{}, '"$is_ntp"' outbounds:[{tag:"direct", type:"direct"}]}' \
+            '{log:{output:($log_dir + "/access.log"), level:"info", timestamp:true}, dns:{}, '"$is_ntp"' '"$is_clash_api"' outbounds:[{tag:"direct", type:"direct"}]}' \
             >"$is_config_json.tmp" && mv "$is_config_json.tmp" "$is_config_json"
         manage restart &
         ;;
