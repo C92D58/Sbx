@@ -52,19 +52,6 @@ method    key       sni       web       new
 door-addr door-port full      user
 ```
 
-## DNS
-
-| Command | Description |
-|---------|-------------|
-| `sbx dns nextdns <id> [device]` | NextDNS DoH + CF/GG fallback |
-| `sbx dns cf` | Cloudflare H3 |
-| `sbx dns gg` | Google H3 |
-| `sbx dns 11` | 1.1.1.1 (UDP) |
-| `sbx dns 88` | 8.8.8.8 (UDP) |
-| `sbx dns family` | Cloudflare Family |
-| `sbx dns set <addr>` | Custom DNS |
-| `sbx dns none` | Clear DNS |
-
 ## Diagnostics
 
 | Command | Description |

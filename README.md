@@ -67,7 +67,19 @@ VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VMess-WS-TLS · Trojan-WS-TLS �
 
 ## 文件
 
-[命令手冊](docs/commands.md) · [DNS 配置](docs/dns.md) · [主題指南](docs/themes.md) · [插件開發](docs/plugins.md)
+[命令手冊](docs/commands.md) · [主題指南](docs/themes.md) · [插件開發](docs/plugins.md)
+
+---
+
+## 法律責任
+
+> ⚖️ **僅供技術學習與合法用途**
+>
+> 本工具（sbx）僅供技術學習、研究與合法用途使用。使用者須自行遵守所在地法律法規，不得將本工具用於任何違法活動（包括但不限於規避網路審查、非法存取、侵犯他人權益等）。
+>
+> 因使用本工具造成的任何直接或間接後果，作者（WAHSUN）概不負責。使用本工具即表示您已閱讀並同意本聲明。
+>
+> ⚖️ *Legal Disclaimer: This tool is provided for educational and lawful purposes only. Users are solely responsible for compliance with applicable laws. The author assumes no liability for any consequences arising from the use of this software.*
 
 ---
 

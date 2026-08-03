@@ -67,7 +67,17 @@ VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VMess-WS-TLS · Trojan-WS-TLS �
 
 ## Documentation
 
-[Commands](docs/commands.md) · [DNS](docs/dns.md) · [Themes](docs/themes.md) · [Plugins](docs/plugins.md)
+[Commands](docs/commands.md) · [Themes](docs/themes.md) · [Plugins](docs/plugins.md)
+
+---
+
+## Legal Disclaimer
+
+> ⚖️ **For educational & lawful use only**
+>
+> sbx is provided for educational, research and lawful purposes only. Users are solely responsible for compliance with applicable laws in their jurisdiction. This tool must not be used for any unlawful activity.
+>
+> The author (WAHSUN) assumes no liability for any direct or indirect consequences arising from the use of this software. By using this tool you acknowledge that you have read and agreed to this disclaimer.
 
 ---
 

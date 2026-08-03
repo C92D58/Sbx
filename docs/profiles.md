@@ -66,13 +66,11 @@ Profiles are stored at `/etc/sbx/profiles/<name>/`:
 ```bash
 # Set up config for Hong Kong
 sbx add reality
-sbx dns nextdns abc123
 sbx profile save hk
 
 # Set up config for US
 sbx del 18347
 sbx add tuic
-sbx dns cf
 sbx profile save us
 
 # Switch between them
