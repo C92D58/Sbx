@@ -52,7 +52,7 @@ load() {
         # service modules
         systemd.sh|caddy.sh|bbr.sh)          mod_path="modules/service/$1" ;;
         # tools modules
-        backup.sh|check.sh|traffic.sh|log.sh|import.sh|download.sh|help.sh|doctor.sh|bench.sh|profile.sh) mod_path="modules/tools/$1" ;;
+        backup.sh|check.sh|log.sh|import.sh|download.sh|help.sh|doctor.sh|bench.sh|profile.sh) mod_path="modules/tools/$1" ;;
         # ui modules
         dashboard.sh|matrix.sh|theme_ui.sh)  mod_path="modules/ui/$1" ;;
         # legacy fallback

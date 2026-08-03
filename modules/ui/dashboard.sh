@@ -180,15 +180,14 @@ dashboard_main() {
     # ── [3] Tools ───────────────────────────────────────────
     3)
         if [[ $zh == 1 ]]; then
-            dashboard_sub "tools" "測速" "健康檢查" "備份" "流量統計" "返回"
+            dashboard_sub "tools" "測速" "健康檢查" "備份" "返回"
         else
-            dashboard_sub "tools" "speed" "health" "backup" "traffic" "back"
+            dashboard_sub "tools" "speed" "health" "backup" "back"
         fi
         case $REPLY in
             1) load speed.sh; speed_set ; _pause ;;
             2) load check.sh; check_set ; _pause ;;
             3) load backup.sh; backup_set ; _pause ;;
-            4) load traffic.sh; traffic_set ; _pause ;;
             *) return ;;
         esac
         ;;
