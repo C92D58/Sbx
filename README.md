@@ -4,7 +4,7 @@
 
 # sbx — Next Generation sing-box Manager
 
-> Modern sing-box Management Framework — Matrix CLI, plugin-ready, multi-profile.
+> Modern sing-box Management Framework — 純 Bash、主題化、插件可擴展。
 
 [![License](https://img.shields.io/badge/license-GPL--3.0-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Linux%20x86__64%20%7C%20ARM64-green)]()
@@ -12,9 +12,9 @@
 
 ---
 
-## Why sbx?
+## 特性
 
-✓ **Pure Bash** — 零依賴 · ✓ **6 種主題** — Matrix / Catppuccin / Nord / Dracula / Gruvbox / Tokyo Night · ✓ **雙語** — 繁體中文 / English · ✓ **Plugin 可擴展** · ✓ **Profile 一鍵切換** · ✓ **Health 評分 + 系統診斷** · ✓ **Atomic JSON** 安全寫入
+✓ **純 Bash 零依賴** · ✓ **6 種主題** · ✓ **雙語**（繁中/EN）· ✓ **Plugin 擴展** · ✓ **Health 評分** · ✓ **Atomic JSON** 安全寫入
 
 ---
 
@@ -33,12 +33,8 @@ bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 | `sbx` | 互動儀表板 |
 | `sbx add <protocol>` | 添加配置（reality / tuic / hy2 / trojan / ss …） |
 | `sbx dns <preset>` | DNS 設定 |
-| `sbx doctor` | 系統診斷 |
-| `sbx bench` | 協議延遲基準測試 |
 | `sbx check` | 健康檢查（含評分） |
-| `sbx profile` | 設定檔管理 |
 | `sbx theme` | 主題切換 |
-| `sbx matrix` | Matrix 數位雨 |
 
 📖 [完整命令手冊](docs/commands.md)
 
@@ -49,39 +45,23 @@ bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 ```
   sbx v2.0  ▶  running
   Next Generation sing-box Manager
-  ─────────────────────────────────
-  By: WAHSUN
 
-  Health: 98/100 ★★★★★  3 configs
-
-  [1] Create       [2] Manage       [3] DNS
-  [4] Tools        [5] Profiles     [6] System
-  [7] Themes       [8] Plugins      [9] Help
-  [0] Exit         [m] Matrix
-```
-
----
-
-## 系統診斷
-
-```bash
-$ sbx doctor
-  Kernel 5.15  PASS    BBR enabled  PASS    DNS resolving  PASS
-  Time synced  PASS    Firewall     PASS    sing-box       PASS
-  >> Your server is healthy.
+  [1] Create    [2] Manage    [3] DNS
+  [4] Tools     [5] System    [6] Settings
+  [0] Exit
 ```
 
 ---
 
 ## 支援協議
 
-VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VLESS-HTTPUpgrade-TLS · VMess-WS-TLS · VMess-H2-TLS · Trojan-WS-TLS · Trojan-H2-TLS · TUIC · Hysteria2 · Shadowsocks · AnyTLS · SOCKS5 · Direct
+VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VMess-WS-TLS · Trojan-WS-TLS · TUIC · Hysteria2 · Shadowsocks · AnyTLS · SOCKS5
 
 ---
 
 ## 文件
 
-- [命令手冊](docs/commands.md) · [DNS 配置](docs/dns.md) · [主題指南](docs/themes.md) · [插件開發](docs/plugins.md) · [Profile 使用](docs/profiles.md)
+[命令手冊](docs/commands.md) · [DNS 配置](docs/dns.md) · [主題指南](docs/themes.md) · [插件開發](docs/plugins.md)
 
 ---
 

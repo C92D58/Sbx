@@ -4,7 +4,7 @@
 
 # sbx — Next Generation sing-box Manager
 
-> Modern sing-box Management Framework — Matrix CLI, plugin-ready, multi-profile.
+> Modern sing-box Management Framework — pure Bash, themed, plugin-ready.
 
 [![License](https://img.shields.io/badge/license-GPL--3.0-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Linux%20x86__64%20%7C%20ARM64-green)]()
@@ -12,9 +12,9 @@
 
 ---
 
-## Why sbx?
+## Features
 
-✓ **Pure Bash** — zero deps · ✓ **6 Themes** — Matrix / Catppuccin / Nord / Dracula / Gruvbox / Tokyo Night · ✓ **Bilingual** — EN / 繁體中文 · ✓ **Plugin Ready** · ✓ **Profile System** · ✓ **Health Scoring + Diagnostics** · ✓ **Atomic JSON** writes
+✓ **Pure Bash, zero deps** · ✓ **6 Themes** · ✓ **Bilingual** (EN / 繁中) · ✓ **Plugin Ready** · ✓ **Health Scoring** · ✓ **Atomic JSON** writes
 
 ---
 
@@ -33,12 +33,8 @@ bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 | `sbx` | Interactive dashboard |
 | `sbx add <protocol>` | Add config (reality / tuic / hy2 / trojan / ss …) |
 | `sbx dns <preset>` | DNS setup |
-| `sbx doctor` | System diagnostics |
-| `sbx bench` | Protocol latency benchmark |
 | `sbx check` | Health check with scoring |
-| `sbx profile` | Profile management |
 | `sbx theme` | Theme switching |
-| `sbx matrix` | Enter the Matrix |
 
 📖 [Full Command Reference](docs/commands.md)
 
@@ -49,39 +45,23 @@ bash <(curl -sL https://raw.githubusercontent.com/c92d58/Sbx/main/install.sh)
 ```
   sbx v2.0  ▶  running
   Next Generation sing-box Manager
-  ─────────────────────────────────
-  By: WAHSUN
 
-  Health: 98/100 ★★★★★  3 configs
-
-  [1] Create       [2] Manage       [3] DNS
-  [4] Tools        [5] Profiles     [6] System
-  [7] Themes       [8] Plugins      [9] Help
-  [0] Exit         [m] Matrix
-```
-
----
-
-## Doctor
-
-```bash
-$ sbx doctor
-  Kernel 5.15  PASS    BBR enabled  PASS    DNS resolving  PASS
-  Time synced  PASS    Firewall     PASS    sing-box       PASS
-  >> Your server is healthy.
+  [1] Create    [2] Manage    [3] DNS
+  [4] Tools     [5] System    [6] Settings
+  [0] Exit
 ```
 
 ---
 
 ## Supported Protocols
 
-VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VLESS-HTTPUpgrade-TLS · VMess-WS-TLS · VMess-H2-TLS · Trojan-WS-TLS · Trojan-H2-TLS · TUIC · Hysteria2 · Shadowsocks · AnyTLS · SOCKS5 · Direct
+VLESS-REALITY · VLESS-WS-TLS · VLESS-H2-TLS · VMess-WS-TLS · Trojan-WS-TLS · TUIC · Hysteria2 · Shadowsocks · AnyTLS · SOCKS5
 
 ---
 
 ## Documentation
 
-- [Commands](docs/commands.md) · [DNS](docs/dns.md) · [Themes](docs/themes.md) · [Plugins](docs/plugins.md) · [Profiles](docs/profiles.md)
+[Commands](docs/commands.md) · [DNS](docs/dns.md) · [Themes](docs/themes.md) · [Plugins](docs/plugins.md)
 
 ---
 
