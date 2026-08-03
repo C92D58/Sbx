@@ -11,8 +11,22 @@ show_help() {
 
         if [[ -f $is_core_dir/lang && $(cat $is_core_dir/lang) == "zh-TW" ]]; then
             show_help_zh
+            msg
+            msg "  ⚖ 法律責任聲明："
+            msg "  本工具僅供技術學習與合法用途。使用者須自行遵守所在地法律法規，"
+            msg "  不得用於任何違法活動。因使用本工具造成的任何後果，"
+            msg "  作者（WAHSUN）概不負責。"
+            msg "  ⚖ Legal Disclaimer: This tool is provided for educational and"
+            msg "  lawful purposes only. Users are solely responsible for compliance"
+            msg "  with applicable laws. The author assumes no liability."
         else
             show_help_en
+            msg
+            msg "  ⚖ LEGAL DISCLAIMER:"
+            msg "  This tool is provided for educational and lawful purposes only."
+            msg "  Users are solely responsible for compliance with applicable laws."
+            msg "  The author (WAHSUN) assumes no liability for any misuse or"
+            msg "  consequences arising from the use of this software."
         fi
 
         msg "use del/ddel with caution — no confirmation"
@@ -153,6 +167,8 @@ about() {
         msg "   · 6 種主題 + 插件擴展系統"
         msg "   · 雙語界面（繁體中文 / English）"
         msg "   · 'sbx matrix' — 進入母體"
+        msg ""
+        msg "  ${c_dim}⚖ 僅供技術學習與合法用途，使用者自負法律責任${c_none}"
     else
         msg "  sbx is a modern sing-box management framework"
         msg "  Matrix-themed terminal UI + 6 color schemes"
@@ -164,6 +180,8 @@ about() {
         msg "   · 6 themes + plugin extension system"
         msg "   · Bilingual UI (English / 繁體中文)"
         msg "   · 'sbx matrix' — enter the Matrix"
+        msg ""
+        msg "  ${c_dim}⚖ For educational & lawful use only. Users bear sole legal responsibility${c_none}"
     fi
     msg
 }
