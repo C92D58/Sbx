@@ -64,7 +64,12 @@ load() {
 # wget add --no-check-certificate
 _wget() {
     [[ $proxy ]] && export https_proxy=$proxy
-    wget --no-check-certificate "$@"
+    # private repo: use GITHUB_TOKEN to authenticate raw/archive downloads
+    if [[ $GITHUB_TOKEN ]]; then
+        wget --no-check-certificate --header="Authorization: token $GITHUB_TOKEN" "$@"
+    else
+        wget --no-check-certificate "$@"
+    fi
 }
 
 # apt-get, yum, zypper or apk
