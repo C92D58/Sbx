@@ -18,6 +18,14 @@
 
 ---
 
+## 截圖
+
+| 主選單 | 工具列表 | 運行畫面 |
+|:---:|:---:|:---:|
+| ![主選單](docs/screenshots/main-menu.png) | ![工具列表](docs/screenshots/tools-list.png) | ![運行畫面](docs/screenshots/running.png) |
+
+---
+
 ## 快速安裝
 
 ```bash
