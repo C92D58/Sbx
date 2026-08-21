@@ -61,7 +61,7 @@ load() {
     . $is_sh_dir/$mod_path
 }
 
-# wget add --no-check-certificate
+# wget 下載（TLS 校驗保持開啟；自簽代理需求可用環境變量 SBX_WGET_NO_CHECK=1 顯式開啟）
 _wget() {
     [[ $proxy ]] && export https_proxy=$proxy
     # auto-load GITHUB_TOKEN from token file if not set
@@ -69,10 +69,12 @@ _wget() {
         export GITHUB_TOKEN=$(cat /etc/$is_sh_name/token)
     fi
     # private repo: use GITHUB_TOKEN to authenticate raw/archive downloads
+    local _wget_flags=()
+    [[ $SBX_WGET_NO_CHECK == "1" ]] && _wget_flags+=(--no-check-certificate)
     if [[ $GITHUB_TOKEN ]]; then
-        wget --no-check-certificate --header="Authorization: token $GITHUB_TOKEN" "$@"
+        wget "${_wget_flags[@]}" --header="Authorization: Bearer $GITHUB_TOKEN" "$@"
     else
-        wget --no-check-certificate "$@"
+        wget "${_wget_flags[@]}" "$@"
     fi
 }
 

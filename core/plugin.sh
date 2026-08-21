@@ -112,6 +112,8 @@ plugin_install() {
 plugin_remove() {
     local name=$1
     [[ ! $name ]] && { echo -e " ${c_dim}usage: sbx plugin remove <name>${c_none}"; return; }
+    # 安全：拒絕路徑穿越（.. / 絕對路徑 / 分隔符）
+    [[ ! $name =~ ^[a-zA-Z0-9_\-]+$ ]] && { warn "plugin name 含不允許的字符（僅字母數字 _-）"; return; }
     [[ ! -d "$PLUGIN_DIR/$name" ]] && { warn "plugin '$name' not found"; return; }
 
     echo -ne " ${c_red}remove plugin '$name'? [y/N]:${c_none} "

@@ -177,6 +177,10 @@ is_test() {
     uuid)
         [[ $2 =~ [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12} ]] && echo ok
         ;;
+    safe_string)
+        # 白名單校驗：僅允許安全字符，拒絕 jq/shell 注入字符（" { } ; $ ` \ 換行）
+        [[ $2 =~ ^[a-zA-Z0-9_\-\.@\+\/\=\:\*]+$ ]] && echo ok
+        ;;
     esac
 
 }
@@ -476,6 +480,9 @@ change() {
         is_new_host=$3
         [[ ! $host ]] && err "($is_config_file) 不支援更改域名."
         [[ ! $is_new_host ]] && ask string is_new_host "請輸入新域名:"
+        [[ ! $(is_test domain "$is_new_host") ]] && {
+            err "($is_new_host) 不是一個有效的域名. $is_err_tips"
+        }
         old_host=$host # del old host
         add $net $is_new_host
         ;;
@@ -555,18 +562,21 @@ change() {
             }
             [[ ! $is_new_private_key ]] && ask string is_new_private_key "請輸入新 Private key:"
             [[ ! $is_new_public_key ]] && ask string is_new_public_key "請輸入新 Public key:"
+            [[ ! $(is_test safe_string "$is_new_private_key") || ! $(is_test safe_string "$is_new_public_key") ]] && {
+                err "Private/Public key 含不允許的字符（僅 base64 字符集）. $is_err_tips"
+            }
             if [[ $is_new_private_key == $is_new_public_key ]]; then
                 err "Private key 和 Public key 不能一样."
             fi
             is_tmp_json=$is_conf_dir/$is_config_file-$uuid
             cp -f $is_conf_dir/$is_config_file $is_tmp_json
-            sed -i s#$is_private_key #$is_new_private_key# $is_tmp_json
+            sed -i s|$is_private_key |$is_new_private_key| $is_tmp_json
             $is_core_bin check -c $is_tmp_json &>/dev/null
             if [[ $? != 0 ]]; then
                 is_key_err=1
                 is_key_err_msg="Private key 無法通過測試."
             fi
-            sed -i s#$is_new_private_key #$is_new_public_key# $is_tmp_json
+            sed -i s|$is_new_private_key |$is_new_public_key| $is_tmp_json
             $is_core_bin check -c $is_tmp_json &>/dev/null
             if [[ $? != 0 ]]; then
                 is_key_err=1
@@ -944,12 +954,37 @@ add() {
             }
             ss_method=$is_tmp_use_type
         fi
-        [[ $is_use_pass ]] && ss_password=$is_use_pass && password=$is_use_pass
-        [[ $is_use_host ]] && host=$is_use_host
-        [[ $is_use_door_addr ]] && door_addr=$is_use_door_addr
+        [[ $is_use_pass ]] && {
+            [[ ! $(is_test safe_string "$is_use_pass") ]] && {
+                err "($is_use_pass) 含不允許的字符（密碼只允許字母數字與 _-.@+/=:*）. $is_err_tips"
+            }
+            ss_password=$is_use_pass && password=$is_use_pass
+        }
+        [[ $is_use_host ]] && {
+            [[ ! $(is_test domain "$is_use_host") ]] && {
+                err "($is_use_host) 不是一個有效的域名. $is_err_tips"
+            }
+            host=$is_use_host
+        }
+        [[ $is_use_door_addr ]] && {
+            [[ ! $(is_test domain "$is_use_door_addr") ]] && {
+                err "($is_use_door_addr) 不是一個有效的目标地址. $is_err_tips"
+            }
+            door_addr=$is_use_door_addr
+        }
         [[ $is_use_servername ]] && is_servername=$is_use_servername
-        [[ $is_use_socks_user ]] && is_socks_user=$is_use_socks_user
-        [[ $is_use_socks_pass ]] && is_socks_pass=$is_use_socks_pass
+        [[ $is_use_socks_user ]] && {
+            [[ ! $(is_test safe_string "$is_use_socks_user") ]] && {
+                err "($is_use_socks_user) 含不允許的字符. $is_err_tips"
+            }
+            is_socks_user=$is_use_socks_user
+        }
+        [[ $is_use_socks_pass ]] && {
+            [[ ! $(is_test safe_string "$is_use_socks_pass") ]] && {
+                err "($is_use_socks_pass) 含不允許的字符. $is_err_tips"
+            }
+            is_socks_pass=$is_use_socks_pass
+        }
     fi
 
     # anytls with domain (ACME TLS)
@@ -978,6 +1013,9 @@ add() {
         fi
         # set host
         [[ ! $host ]] && ask string host "請輸入域名:"
+        [[ ! $(is_test domain "$host") ]] && {
+            err "($host) 不是一個有效的域名. $is_err_tips"
+        }
         # test host dns
         get host-test
     else
@@ -1526,7 +1564,13 @@ update() {
         err "無法識別 ($1), 請使用: $is_sh_name update [core | sh | caddy] [ver]"
         ;;
     esac
-    [[ $2 ]] && is_new_ver=v${2#v}
+    [[ $2 ]] && {
+        is_new_ver=v${2#v}
+        # 版本參數白名單：僅允許 v + 數字. 小數點（防 URL 注入/路徑穿越）
+        [[ ! $is_new_ver =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] && {
+            err "($2) 不是一個有效的版本號（格式: v1.2.3）. $is_err_tips"
+        }
+    }
     [[ $is_run_ver == $is_new_ver ]] && {
         msg "\n自定義版本和當前 $is_show_name 版本一样, 無需更新.\n"
         exit

@@ -48,6 +48,8 @@ profile_save() {
         read -r name
     }
     [[ ! $name ]] && err "profile name required"
+    # 安全：拒絕路徑穿越（.. / 絕對路徑 / 分隔符）
+    [[ ! $name =~ ^[a-zA-Z0-9_\-]+$ ]] && err "profile name 含不允許的字符（僅字母數字 _-）"
 
     mkdir -p "$profile_dir/$name/conf"
 
@@ -108,6 +110,8 @@ profile_switch() {
 profile_delete() {
     local name=$1
     [[ ! $name ]] && err "usage: sbx profile delete <name>"
+    # 安全：拒絕路徑穿越
+    [[ ! $name =~ ^[a-zA-Z0-9_\-]+$ ]] && err "profile name 含不允許的字符（僅字母數字 _-）"
     [[ ! -d "$profile_dir/$name" ]] && err "profile '$name' not found"
 
     echo -ne " ${c_red}delete profile '$name'? [y/N]:${c_none} "

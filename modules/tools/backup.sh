@@ -46,6 +46,13 @@ restore_set() {
     [[ ! $file ]] && err "usage: sbx restore <backup-file>"
     [[ ! -f $file ]] && err "file not found: $file"
 
+    # 安全：預掃描 tar 條目，拒絕絕對路徑與 ../ 穿越
+    local bad
+    bad=$(tar tzf "$file" 2>/dev/null | grep -E '^/|(^|/)\.\.(/|$)' | head -5)
+    if [[ $bad ]]; then
+        err "backup 包含不安全路徑（絕對路徑或 ../ 穿越），已中止：$(echo $bad | head -1)"
+    fi
+
     _dim ">> $L_BACKUP_RESTORE"
     # backup current first
     backup_create

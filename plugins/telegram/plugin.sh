@@ -50,6 +50,8 @@ TG_NOTIFY_STOP="1"
 TG_NOTIFY_CRASH="1"
 TG_DAILY_HEALTH="1"
 EOF
+    # 安全：配置含 bot token，收緊權限（防止本機其他用戶讀取/注入）
+    chmod 600 "$PLUGIN_TELEGRAM_CONF"
 
     _bright ">> Telegram configured"
     echo -e "  ${c_dim}test with:${c_none} sbx plugin telegram test"

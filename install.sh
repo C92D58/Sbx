@@ -107,14 +107,16 @@ load() {
     . $is_sh_dir/$mod_path
 }
 
-# wget add --no-check-certificate
+# wget 下載（TLS 校驗保持開啟；自簽代理需求可用環境變量 SBX_WGET_NO_CHECK=1 顯式開啟）
 _wget() {
     [[ $proxy ]] && export https_proxy=$proxy
     # private repo: use GITHUB_TOKEN to authenticate raw/archive downloads
+    local _wget_flags=()
+    [[ $SBX_WGET_NO_CHECK == "1" ]] && _wget_flags+=(--no-check-certificate)
     if [[ $GITHUB_TOKEN ]]; then
-        wget --no-check-certificate --header="Authorization: token $GITHUB_TOKEN" $*
+        wget "${_wget_flags[@]}" --header="Authorization: Bearer $GITHUB_TOKEN" $*
     else
-        wget --no-check-certificate $*
+        wget "${_wget_flags[@]}" $*
     fi
 }
 
@@ -188,7 +190,15 @@ download() {
         is_ok=$is_core_ok
         ;;
     sh)
-        link=https://github.com/${is_sh_repo}/archive/main.tar.gz
+        # 供應鏈安全：改用 release tag 而非可變 main 分支（回退 main 並警告）
+        local _sh_ver
+        _sh_ver=$(_wget -qO- "https://api.github.com/repos/${is_sh_repo}/releases/latest?v=$RANDOM" | grep tag_name | grep -E -o 'v([0-9.]+)' | head -1)
+        if [[ $_sh_ver ]]; then
+            link="https://github.com/${is_sh_repo}/archive/refs/tags/${_sh_ver}.tar.gz"
+        else
+            link=https://github.com/${is_sh_repo}/archive/main.tar.gz
+            msg warn "未能獲取 release tag，回退 main 分支（無版本鎖定）"
+        fi
         name="$is_sh_name 腳本"
         tmpfile=$tmpsh
         is_ok=$is_sh_ok
@@ -447,6 +457,11 @@ main() {
         tar zxf $is_core_ok --strip-components 1 -C $is_core_dir/bin
     fi
 
+    # 安全：安裝目錄收緊權限（配置含 uuid/密碼/私鑰，僅 root 可讀）
+    chmod 700 $is_sh_dir $is_core_dir $is_conf_dir $is_log_dir 2>/dev/null
+    chmod 600 $is_conf_dir/*.json 2>/dev/null
+    chmod 600 $is_core_dir/bin/tls.key 2>/dev/null
+
     # add alias: sb = sbx
     echo "alias sb=$is_sh_bin" >>/root/.bashrc
     echo "alias $is_sh_name=$is_sh_bin" >>/root/.bashrc
@@ -474,8 +489,9 @@ main() {
     is_new_install=1
     install_service $is_core &>/dev/null
 
-    # create conf dir
+    # create conf dir（700：配置含 uuid/密碼/私鑰）
     mkdir -p $is_conf_dir
+    chmod 700 $is_conf_dir
 
     # write language choice
     [[ -f $tmpdir/lang ]] && cp $tmpdir/lang $is_core_dir/lang
@@ -483,6 +499,9 @@ main() {
     load dispatcher.sh
     # create a reality config
     add reality
+    # 配置生成後收緊權限
+    chmod 600 $is_conf_dir/*.json 2>/dev/null
+    chmod 600 $is_core_dir/bin/tls.key 2>/dev/null
     # wait for background tasks (e.g., OpenRC service start)
     wait
     # remove tmp dir and exit.
